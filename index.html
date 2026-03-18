@@ -877,8 +877,11 @@
       sidebarOpen ? closeSidebar() : openSidebar();
     });
 
-    reader.addEventListener('click', () => {
-      if (sidebarOpen && currentView !== 'stories') closeSidebar();
+    reader.addEventListener('click', (event) => {
+      if (!sidebarOpen) return;
+      if (event.target.closest('#sidebar')) return;
+      if (event.target.closest('.site-header')) return;
+      closeSidebar();
     });
 
     function switchView(view) {
