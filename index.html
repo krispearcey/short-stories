@@ -1,215 +1,1093 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kristopher Pearcey</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stories — Kristopher Pearcey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --hero-width: min(1180px, calc(100vw - 48px));
+      --muted: #b8b0a6;
+      --deep: #070809;
+      --blood: rgba(148, 32, 32, 0.85);
+      --sidebar-w: 300px;
+      --header-h: 56px;
+    }
 
-<style>
-:root{
-  --text:#eaeaea;
-  --muted:#9a9a9a;
-  --bg:#0a0a0a;
-  --accent:#cfcfcf;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-body{
-  margin:0;
-  font-family: 'Cormorant Garamond', serif;
-  background:var(--bg);
-  color:var(--text);
-}
+    html, body {
+      height: 100%; overflow: hidden;
+      background: var(--deep);
+      color: #e8dfd6;
+      font-family: 'DM Mono', 'Courier New', monospace;
+    }
 
-/* NAV */
-nav{
-  position:fixed;
-  top:24px;
-  right:32px;
-  z-index:10;
-}
+    a { color: inherit; text-decoration: none; }
 
-nav a{
-  margin-left:24px;
-  text-decoration:none;
-  color:var(--muted);
-  cursor:pointer;
-}
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.08; pointer-events: none; z-index: 900;
+    }
 
-nav a:hover{
-  color:var(--text);
-}
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 55% 70% at 30% 55%, rgba(14,12,10,0) 0%, rgba(3,4,6,0.55) 100%),
+        radial-gradient(ellipse 40% 50% at 28% 54%, rgba(22,16,10,0.12) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
 
-/* NAME */
-.header{
-  position:fixed;
-  top:24px;
-  left:32px;
-  font-weight:700;
-  letter-spacing:2px;
-  z-index:10;
-}
+    /* ── Animations ── */
+    @keyframes nav-glitch {
+      0%, 93.9%  { opacity: 1; transform: translate(0,0); filter: none; }
+      94.2%      { opacity: 0.6; transform: translate(1px,0); filter: blur(0.4px); }
+      94.5%      { opacity: 1; transform: translate(-1px,0); filter: none; }
+      94.8%      { opacity: 0.8; }
+      95%, 100%  { opacity: 1; transform: translate(0,0); filter: none; }
+    }
 
-/* PAGES */
-.page{
-  display:none;
-  padding:120px 32px 60px;
-  max-width:900px;
-  margin:auto;
-}
+    @keyframes nav-hover-flicker {
+      0%   { transform: translate(0,0); opacity: 1; }
+      15%  { transform: translate(-1px, 0); opacity: 0.75; }
+      30%  { transform: translate(1px, 0); opacity: 1; }
+      50%  { transform: translate(-1px, 0); opacity: 0.85; }
+      70%  { transform: translate(0, 0); opacity: 1; }
+      100% { transform: translate(0,0); opacity: 1; }
+    }
 
-#home{
-  display:block;
-  text-align:center;
-  margin-top:120px;
-}
+    @keyframes ghost-red {
+      0%   { opacity: 0; transform: translate(0,0); }
+      15%  { opacity: 0.5; transform: translate(-2px, 0); }
+      30%  { opacity: 0.2; transform: translate(-3px, 0); }
+      50%  { opacity: 0.3; transform: translate(-2px, 0); }
+      70%  { opacity: 0.05; transform: translate(-1px, 0); }
+      100% { opacity: 0; transform: translate(0,0); }
+    }
 
-/* STORIES LIST */
-.story-item{
-  padding:16px 0;
-  border-bottom:1px solid rgba(255,255,255,0.08);
-  cursor:pointer;
-}
+    @keyframes ghost-cyan {
+      0%   { opacity: 0; transform: translate(0,0); }
+      15%  { opacity: 0.4; transform: translate(2px, 0); }
+      30%  { opacity: 0.15; transform: translate(3px, 0); }
+      50%  { opacity: 0.25; transform: translate(2px, 0); }
+      70%  { opacity: 0.05; transform: translate(1px, 0); }
+      100% { opacity: 0; transform: translate(0,0); }
+    }
 
-.story-title{
-  font-size:20px;
-}
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-.story-meta{
-  font-size:12px;
-  color:var(--muted);
-}
+    @keyframes burger-glitch {
+      0%, 93.9%  { opacity: 1; transform: translate(0,0); filter: none; }
+      94.2%      { opacity: 0.6; transform: translate(1px,0); filter: blur(0.4px); }
+      94.5%      { opacity: 1; transform: translate(-1px,0); filter: none; }
+      94.8%      { opacity: 0.8; }
+      95%, 100%  { opacity: 1; transform: translate(0,0); filter: none; }
+    }
 
-/* READER */
-#reader{
-  margin-top:40px;
-  line-height:1.7;
-}
+    @keyframes burger-hover-flicker {
+      0%   { transform: translate(0,0); opacity: 1; }
+      15%  { transform: translate(-1px, 0); opacity: 0.75; }
+      30%  { transform: translate(1px, 0); opacity: 1; }
+      50%  { transform: translate(-1px, 0); opacity: 0.85; }
+      70%  { transform: translate(0, 0); opacity: 1; }
+      100% { transform: translate(0,0); opacity: 1; }
+    }
 
-.loading{
-  opacity:.6;
-}
-</style>
+    /* ── Header ── */
+    .site-header {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+      padding: 14px 32px;
+      background: rgba(7,8,9,0.92);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 1px 0 rgba(232,223,214,0.05);
+    }
+
+    .site-title {
+      margin: 0;
+      text-transform: uppercase; font-weight: 900;
+      font-size: clamp(1.4rem, 2.8vw, 2.4rem);
+      line-height: .92; letter-spacing: -.04em; text-align: left;
+      flex-shrink: 0;
+    }
+
+    .site-title a {
+      position: relative; color: #ddd6cc; cursor: pointer;
+      transition: color .15s;
+      display: inline-block;
+    }
+    .site-title a::before, .site-title a::after {
+      content: attr(data-text);
+      position: absolute; top: 0; left: 0;
+      opacity: 0; pointer-events: none;
+      white-space: nowrap;
+      text-transform: uppercase; font-weight: 900;
+      font-size: clamp(1.4rem, 2.8vw, 2.4rem);
+      letter-spacing: -.04em; line-height: .92;
+    }
+    .site-title a::before { color: rgba(255,30,30,0.7); z-index: -1; }
+    .site-title a::after  { color: rgba(0,210,255,0.6);  z-index: -2; }
+    .site-title a:hover { color: #fff; animation: nav-hover-flicker 0.25s steps(1) forwards; }
+    .site-title a:hover::before { animation: ghost-red  0.25s steps(1) forwards; }
+    .site-title a:hover::after  { animation: ghost-cyan 0.25s steps(1) forwards; }
+
+    .nav {
+      display: flex; gap: 36px; flex-wrap: wrap;
+      justify-content: flex-end; align-items: center;
+      letter-spacing: .22em; text-transform: uppercase;
+      font-size: .9rem; color: var(--muted);
+    }
+
+    .nav a {
+      position: relative; transition: color .15s;
+      cursor: pointer;
+    }
+    .nav a:nth-child(1) { }
+    .nav a:nth-child(2) { }
+    .nav a:nth-child(3) { }
+
+    .nav a::before, .nav a::after {
+      content: attr(data-text);
+      position: absolute; top: 0; left: 0;
+      opacity: 0; pointer-events: none;
+      white-space: nowrap; letter-spacing: .22em;
+      text-transform: uppercase; font-size: .9rem;
+    }
+    .nav a::before { color: rgba(255,30,30,0.7); z-index: -1; }
+    .nav a::after  { color: rgba(0,210,255,0.6);  z-index: -2; }
+
+    .nav a:hover { color: #fff; animation: nav-hover-flicker 0.25s steps(1) forwards; }
+    .nav a:hover::before { animation: ghost-red  0.25s steps(1) forwards; }
+    .nav a:hover::after  { animation: ghost-cyan 0.25s steps(1) forwards; }
+    .nav a:focus-visible { outline: none; color: #fff; }
+    .nav a span { position: relative; }
+
+    .nav a.nav-active { color: rgba(148,32,32,0.85); animation: none; }
+    .nav a.nav-active:hover { color: rgba(148,32,32,0.85); }
+
+    /* ── Burger ── */
+    .burger-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; padding: 0; flex-shrink: 0;
+      transition: color 0.15s;
+    }
+
+    .burger-btn svg { display: block; }
+    .burger-btn:hover { color: #fff; animation: burger-hover-flicker 0.25s steps(1) forwards; }
+    .burger-btn.open { color: rgba(148, 32, 32, 0.9); }
+    .burger-btn.open:hover { color: rgba(180, 40, 40, 1); animation: burger-hover-flicker 0.25s steps(1) forwards; }
+
+    /* ── Main layout ── */
+    .main-layout {
+      position: relative; z-index: 10;
+      display: flex; height: 100vh;
+      padding-top: var(--header-h);
+    }
+
+    /* ── Reader / content panel ── */
+    .reader {
+      flex: 1; height: 100%; overflow-y: auto;
+      padding: 48px clamp(32px, 5vw, 80px) 80px;
+      position: relative; display: flex; flex-direction: column; align-items: center;
+    }
+
+    .reader::-webkit-scrollbar { width: 6px; }
+    .reader::-webkit-scrollbar-track { background: transparent; }
+    .reader::-webkit-scrollbar-thumb { background: rgba(232,223,214,0.06); }
+
+    /* ── View switching ── */
+    .view { display: none; width: 100%; display: none; }
+    .view.active { display: flex; flex-direction: column; align-items: center; animation: fadeIn 0.3s ease both; }
+
+    /* ── Stories view ── */
+    .reader-empty, .story-content { width: 100%; max-width: 760px; }
+
+    .reader-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; opacity: 0.25; text-align: center; user-select: none;
+      min-height: calc(100vh - var(--header-h) - 128px);
+    }
+
+    .reader-empty-icon { font-size: 2.5rem; opacity: 0.4; }
+    .reader-empty-label { font-size: .72rem; letter-spacing: .28em; text-transform: uppercase; color: var(--muted); }
+
+    .story-content { animation: fadeIn 0.4s ease both; }
+    .story-content-header { margin-bottom: 32px; }
+
+    .story-content-title {
+      font-family: 'Crimson Pro', Georgia, 'Times New Roman', serif;
+      font-size: clamp(2.2rem, 4.5vw, 3.6rem); font-weight: 300; color: #e2dbd2;
+      line-height: 1.08; letter-spacing: -.02em; margin-bottom: 16px;
+    }
+
+    .story-content-meta {
+      display: flex; align-items: center; gap: 12px;
+      font-size: .72rem; letter-spacing: .12em; color: rgba(178,168,156,0.82); margin-bottom: 22px;
+    }
+
+    .story-content-meta-dot {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: rgba(168,158,146,0.3); flex-shrink: 0;
+    }
+
+    .story-content-excerpt {
+      font-family: 'Crimson Pro', Georgia, 'Times New Roman', serif;
+      font-style: italic; font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+      color: rgba(220,212,202,0.88); line-height: 1.75;
+      border-left: 2px solid var(--blood); padding-left: 18px; margin-bottom: 28px; font-weight: 300;
+    }
+
+    .story-content-divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(to right, rgba(232,223,214,0.08), transparent); margin-bottom: 36px;
+    }
+
+    .story-body {
+      font-family: 'Crimson Pro', Georgia, 'Times New Roman', serif;
+      font-size: clamp(1.1rem, 1.5vw, 1.22rem); line-height: 1.88;
+      color: #b0a89e; font-weight: 300; letter-spacing: 0.01em;
+    }
+    .story-body p { margin-bottom: 1.6em; }
+    .story-body p:last-child { margin-bottom: 0; }
+    .story-body em { font-style: italic; color: rgba(195,185,173,0.92); }
+
+    .btn {
+      font-size: .74rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase;
+      background: rgba(232,223,214,0.08); border: 1px solid rgba(232,223,214,0.22);
+      color: rgba(232,223,214,0.8); padding: 13px 34px; cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s; display: inline-block;
+    }
+    .btn:hover { background: rgba(232,223,214,0.14); border-color: rgba(232,223,214,0.4); color: rgba(232,223,214,1); }
+    .story-downloads { display: flex; gap: 12px; margin-top: 4px; margin-bottom: 4px; }
+
+    /* ── About view ── */
+    .about-view {
+      max-width: 900px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 35fr 65fr;
+      align-items: start; padding: clamp(40px, 8vh, 80px) 0 60px;
+      gap: 0; position: relative;
+    }
+
+    .about-view::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 35%; width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(232,223,214,0.08) 15%, rgba(232,223,214,0.08) 85%, transparent);
+      pointer-events: none;
+    }
+
+    .about-left {
+      padding-right: clamp(16px, 2.5vw, 36px);
+      display: flex; flex-direction: column; align-items: flex-end;
+    }
+
+    .about-photo-wrap { position: relative; display: inline-block; }
+
+    .about-photo-wrap img {
+      display: block; width: clamp(140px, 20vw, 260px); aspect-ratio: 3/4; object-fit: cover;
+      position: relative; z-index: 2;
+      filter: grayscale(25%) contrast(1.05);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 80px rgba(0,0,0,0.4), -20px 0 60px rgba(0,0,0,0.6);
+    }
+
+    .about-photo-wrap::after {
+      content: ''; position: absolute; bottom: -18px; left: 50%;
+      transform: translateX(-50%); width: 85%; height: 28px;
+      background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(0,0,0,0.7), transparent);
+      filter: blur(8px); z-index: 1; pointer-events: none;
+    }
+
+    .about-right {
+      padding-left: clamp(28px, 4vw, 60px);
+      margin-top: calc(-1em - clamp(14px, 2.2vh, 24px));
+      display: flex; flex-direction: column;
+    }
+
+    .about-label {
+      font-size: .68rem; letter-spacing: .38em; text-transform: uppercase;
+      color: rgba(232,223,214,0.58); margin-bottom: clamp(14px, 2.2vh, 24px);
+    }
+
+    .about-headline {
+      font-family: 'Crimson Pro', Georgia, 'Times New Roman', serif;
+      font-size: clamp(1.8rem, 3.6vw, 2.9rem); font-weight: 300;
+      line-height: 1.22; color: #e2dbd2; letter-spacing: -.01em;
+      margin-bottom: clamp(18px, 2.8vh, 32px);
+    }
+
+    .about-rule {
+      width: 40px; height: 1px;
+      background: linear-gradient(to right, rgba(232,223,214,0.2), transparent);
+      margin-bottom: clamp(18px, 2.8vh, 32px);
+    }
+
+    .about-body {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: clamp(1.05rem, 1.4vw, 1.2rem); line-height: 1.9;
+      color: #b0a89e; margin-bottom: clamp(14px, 2vh, 22px); font-weight: 300;
+    }
+
+    /* ── About left contact links ── */
+    .about-photo-links {
+      margin-top: clamp(18px, 2.8vh, 26px);
+      width: clamp(140px, 20vw, 260px);
+      border-top: 1px solid rgba(232,223,214,0.08);
+      padding-top: clamp(14px, 2.2vh, 20px);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .about-contact-row {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    }
+
+    .about-contact-label {
+      font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(184,176,166,0.55); flex-shrink: 0;
+    }
+
+    .about-contact-value {
+      font-size: .72rem; letter-spacing: .06em;
+      color: rgba(232,223,214,0.88); text-align: right;
+      transition: color .15s;
+    }
+    .about-contact-value:hover { color: rgba(232,223,214,1); }
+
+    /* ── Contact view ── */
+    .contact-view {
+      max-width: 640px; margin: 0 auto; width: 100%;
+      padding: clamp(16px, 3vh, 36px) 0 40px;
+    }
+
+    .contact-block {
+      padding: clamp(24px, 4vh, 44px) 0;
+      border-bottom: 1px solid rgba(232,223,214,0.06);
+      display: grid; grid-template-columns: 1fr auto;
+      column-gap: clamp(24px, 4vw, 56px); align-items: center;
+    }
+    .contact-block:first-child { border-top: 1px solid rgba(232,223,214,0.06); }
+
+    .contact-text { display: flex; flex-direction: column; gap: clamp(5px, 0.8vh, 9px); }
+
+    .contact-label {
+      font-size: .66rem; letter-spacing: .36em; text-transform: uppercase;
+      color: rgba(232,223,214,0.58);
+    }
+    .contact-block:nth-child(1) .contact-label { }
+    .contact-block:nth-child(2) .contact-label { }
+    .contact-block:nth-child(3) .contact-label { }
+
+    .contact-heading {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: clamp(1.2rem, 2.2vw, 1.7rem); font-weight: 400;
+      letter-spacing: -.01em; color: #e0d8ce; line-height: 1.1;
+    }
+
+    .contact-subtext {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: clamp(.95rem, 1.3vw, 1.1rem); line-height: 1.75;
+      color: #b0a89e; font-weight: 300; max-width: 380px;
+    }
+    .contact-action { flex-shrink: 0; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed; top: var(--header-h); right: 0; bottom: 0;
+      width: var(--sidebar-w); overflow: hidden;
+      border-left: 1px solid rgba(232,223,214,0.06);
+      display: flex; flex-direction: column;
+      transition: transform 0.32s cubic-bezier(0.16,1,0.3,1), opacity 0.22s ease, top 0.35s cubic-bezier(0.16,1,0.3,1);
+      z-index: 50; background: var(--deep);
+    }
+
+    body.cta-visible .sidebar { top: calc(var(--header-h) + 52px); }
+
+    .sidebar.collapsed { transform: translateX(100%); opacity: 0; pointer-events: none; }
+
+    .sidebar-controls, .story-list { white-space: nowrap; }
+    .story-item-title, .story-item-meta { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(232,223,214,0.06); }
+
+    .sidebar-controls {
+      padding: 18px 16px 12px; display: flex; flex-direction: column; gap: 10px;
+      border-bottom: 1px solid rgba(232,223,214,0.06); flex-shrink: 0;
+    }
+
+    .search-wrap { position: relative; }
+    .search-wrap svg {
+      position: absolute; left: 10px; top: 50%;
+      transform: translateY(-50%); opacity: 0.3; pointer-events: none;
+    }
+
+    .sidebar-search {
+      width: 100%; background: rgba(232,223,214,0.04);
+      border: 1px solid rgba(232,223,214,0.09); color: #e8dfd6;
+      font-family: 'DM Mono', 'Courier New', monospace; font-size: .82rem; letter-spacing: .04em;
+      padding: 10px 10px 10px 32px; outline: none; transition: border-color 0.2s;
+    }
+    .sidebar-search::placeholder { color: rgba(168,158,146,0.45); }
+    .sidebar-search:focus { border-color: rgba(232,223,214,0.2); }
+
+    .sidebar-sort {
+      width: 100%; background: rgba(232,223,214,0.04);
+      border: 1px solid rgba(232,223,214,0.09); color: rgba(168,158,146,0.8);
+      font-family: 'DM Mono', 'Courier New', monospace; font-size: .78rem;
+      letter-spacing: .08em; text-transform: uppercase; padding: 9px 10px;
+      outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(168,158,146,0.5)'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center; transition: border-color 0.2s;
+    }
+    .sidebar-sort:focus { border-color: rgba(232,223,214,0.2); }
+    .sidebar-sort option { background: #0e0f10; color: #e8dfd6; }
+
+    .story-list { flex: 1; padding: 8px 0; overflow-y: auto; }
+
+    .story-item {
+      position: relative; padding: 16px 18px 16px 22px;
+      cursor: pointer; border-bottom: 1px solid rgba(232,223,214,0.04); transition: background 0.15s ease;
+    }
+    .story-item:hover { background: rgba(232,223,214,0.03); }
+    .story-item.active { background: rgba(232,223,214,0.05); }
+
+    .story-item::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 2px; background: var(--blood); opacity: 0; transition: opacity 0.2s ease;
+    }
+    .story-item.active::before { opacity: 1; }
+
+    .story-item-title {
+      font-size: .92rem; font-weight: 400; color: #cec8c0;
+      letter-spacing: .01em; margin-bottom: 5px; line-height: 1.45;
+    }
+    .story-item.active .story-item-title { color: #e8dfd6; }
+    .story-item-meta { font-size: .72rem; letter-spacing: .04em; color: rgba(178,168,156,0.78); }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--deep); }
+    ::-webkit-scrollbar-thumb { background: rgba(232,223,214,0.08); border-radius: 0; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(232,223,214,0.14); }
+    * { scrollbar-color: rgba(232,223,214,0.06) transparent; scrollbar-width: thin; }
+
+    /* ── Back to top ── */
+    .back-to-top {
+      position: fixed; bottom: 36px; right: 36px;
+      z-index: 300; width: 40px; height: 40px;
+      background: rgba(7,8,9,0.8); border: 1px solid rgba(232,223,214,0.12);
+      color: rgba(168,158,146,0.6); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease, color 0.2s, background 0.2s, right 0.32s cubic-bezier(0.16,1,0.3,1);
+    }
+    .back-to-top.visible { opacity: 1; pointer-events: auto; }
+    body.sidebar-open .back-to-top { right: calc(var(--sidebar-w) + 36px); }
+    .back-to-top:hover { color: rgba(232,223,214,0.9); background: rgba(20,18,16,0.9); }
+    .back-to-top i { font-size: .7rem; }
+
+    /* ── Mobile ── */
+    @media (max-width: 760px) {
+      .about-view { grid-template-columns: 1fr; padding: 24px 0 48px; }
+      .about-view::after { display: none; }
+      .about-left { align-items: center; padding-right: 0; margin-bottom: 32px; }
+      .about-photo-links { align-items: flex-start; }
+      .about-right { padding-left: 0; margin-top: 0; }
+    }
+    @media (max-width: 640px) {
+      .sidebar { position: absolute; right: 0; height: 100%; }
+      .reader { padding: 24px 20px 60px; }
+    }
+    /* ── CTA bar ── */
+    .cta-bar {
+      position: fixed; top: var(--header-h); left: 0; right: 0;
+      z-index: 101;
+      background: rgba(44, 12, 12, 0.82);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      overflow: hidden;
+      max-height: 60px;
+      transition: max-height 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.28s ease;
+    }
+    .cta-bar.closed {
+      max-height: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .cta-bar-inner {
+      position: relative;
+      display: flex; align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 11px 48px;
+      width: 100%;
+    }
+    .cta-bar-text {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1rem; font-weight: 300;
+      color: rgba(232,218,208,0.82);
+      white-space: nowrap;
+    }
+    .cta-bar-btn {
+      font-size: .67rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+      background: rgba(148,32,32,0.35); border: 1px solid rgba(148,32,32,0.65);
+      color: rgba(232,200,200,0.95); padding: 7px 18px; cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s; white-space: nowrap;
+      text-decoration: none; display: inline-block;
+    }
+    .cta-bar-btn:hover { background: rgba(148,32,32,0.55); border-color: rgba(180,40,40,0.85); color: #fff; }
+    .cta-bar-close {
+      position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      font-family: 'DM Mono', 'Courier New', monospace;
+      font-size: .72rem;
+      color: rgba(232,218,208,0.55);
+      padding: 4px 6px;
+      transition: color 0.15s; line-height: 1;
+    }
+    .cta-bar-close:hover { color: rgba(232,218,208,0.95); }
+
+    body.cta-visible .main-layout { padding-top: calc(var(--header-h) + 52px); }
+
+    /* ── Home view ── */
+    .home-view {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: clamp(36px, 6vh, 64px) 0 60px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: clamp(44px, 6vw, 88px);
+      align-items: center;
+    }
+
+    .home-cover-wrap {
+      width: clamp(240px, 28vw, 380px);
+    }
+
+    .home-cover-img {
+      display: block; width: 100%;
+      box-shadow: 0 48px 120px rgba(0,0,0,0.97), 0 12px 40px rgba(0,0,0,0.6);
+    }
+
+    .home-text-col {
+      display: flex; flex-direction: column;
+      gap: 0;
+    }
+
+    .home-release {
+      font-size: .68rem; letter-spacing: .38em; text-transform: uppercase;
+      color: rgba(232,223,214,0.58);
+      margin-bottom: clamp(20px, 3vh, 32px);
+    }
+
+    .home-quote {
+      padding: clamp(18px, 2.8vh, 28px) 0;
+      border-top: 1px solid rgba(232,223,214,0.07);
+    }
+
+    .home-quote-text {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-style: italic;
+      font-size: clamp(1.08rem, 1.4vw, 1.22rem);
+      line-height: 1.78;
+      color: #e0d9d1;
+      font-weight: 300;
+      margin-bottom: 10px;
+    }
+    .home-quote-text::before { content: '\201C'; }
+    .home-quote-text::after  { content: '\201D'; }
+
+    .home-quote-source {
+      font-size: .64rem; letter-spacing: .26em; text-transform: uppercase;
+      color: rgba(232,223,214,0.52);
+      padding-left: 2px;
+    }
+    .home-quote-source::before {
+      content: '—';
+      color: var(--blood);
+      margin-right: 10px;
+      letter-spacing: 0;
+    }
+
+    @media (max-width: 700px) {
+      .home-view { grid-template-columns: 1fr; justify-items: center; gap: 36px; }
+      .home-cover-wrap { width: clamp(180px, 60vw, 280px); }
+      .cta-bar-text { display: none; }
+      .cta-bar-input { width: 150px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="header">KRISTOPHER PEARCEY</div>
+  <header class="site-header" id="siteHeader">
+    <h1 class="site-title"><a data-view="home" data-text="Kristopher Pearcey">Kristopher Pearcey</a></h1>
+    <nav class="nav" aria-label="Primary navigation">
+      <a data-view="home" data-text="Home" class="nav-active"><span>Home</span></a>
+      <a data-view="about" data-text="About"><span>About</span></a>
+      <a data-view="stories" data-text="Stories"><span>Stories</span></a>
+      <button class="burger-btn" id="burgerBtn" aria-label="Toggle story list">
+        <svg width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="0" y1="1"  x2="18" y2="1"  stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+          <line x1="0" y1="7"  x2="18" y2="7"  stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+          <line x1="0" y1="13" x2="18" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+        </svg>
+      </button>
+    </nav>
+  </header>
 
-<nav>
-  <a data-nav="home">Home</a>
-  <a data-nav="about">About</a>
-  <a data-nav="stories">Stories</a>
-</nav>
+  <!-- Newsletter CTA bar -->
+  <div class="cta-bar" id="ctaBar">
+    <div class="cta-bar-inner">
+      <p class="cta-bar-text">Sign up for the newsletter to be notified of new content</p>
+      <a href="#" class="cta-bar-btn">Subscribe</a>
+      <button class="cta-bar-close" id="ctaClose" aria-label="Dismiss">✕</button>
+    </div>
+  </div>
 
-<!-- HOME -->
-<div id="home" class="page">
-  <h1>Quiet Places</h1>
-  <p>To be released</p>
-</div>
+  <div class="main-layout">
 
-<!-- ABOUT -->
-<div id="about" class="page">
-  <p>Author of liminal and cosmic horror.</p>
-</div>
+    <main class="reader" id="reader">
 
-<!-- STORIES -->
-<div id="stories" class="page">
-  <div id="storyList"></div>
-  <div id="reader"></div>
-</div>
+      <!-- Home view -->
+      <div class="view active" id="view-home">
+        <div class="home-view">
 
-<script>
-let STORIES = [];
+          <div class="home-cover-wrap">
+            <img class="home-cover-img" src="quiet-places.jpg" alt="Quiet Places — Kristopher Pearcey">
+          </div>
 
-/* LOAD STORIES */
-async function loadStories() {
-  try {
-    const res = await fetch('stories/index.json');
+          <div class="home-text-col">
+            <p class="home-release">To be released</p>
 
-    if (!res.ok) throw new Error('Missing index.json');
+            <div class="home-quote">
+              <p class="home-quote-text">Pearcey writes the kind of horror that doesn't announce itself. It simply arrives, and by the time you notice it, it has already been there a while.</p>
+              <p class="home-quote-source">Atlantic Review of Books</p>
+            </div>
 
-    STORIES = await res.json();
-    renderStories(STORIES);
+            <div class="home-quote">
+              <p class="home-quote-text">Spare, cold, and genuinely unsettling. The restraint here is the whole point — and it works.</p>
+              <p class="home-quote-source">The Coastal Reader</p>
+            </div>
 
-  } catch (err) {
-    console.error(err);
+            <div class="home-quote">
+              <p class="home-quote-text">There is real craft in knowing what not to say. Pearcey knows exactly when to stop.</p>
+              <p class="home-quote-source">Newfoundland Quarterly</p>
+            </div>
+          </div>
 
-    document.getElementById('storyList').innerHTML = `
-      <div style="opacity:.6;">
-        No stories found.<br>
-        Ensure /stories/index.json exists.
+        </div>
       </div>
-    `;
-  }
-}
 
-/* RENDER LIST */
-function renderStories(stories) {
-  const list = document.getElementById('storyList');
-  list.innerHTML = '';
+      <!-- Stories view -->
+      <div class="view" id="view-stories">
+        <div class="reader-empty" id="readerEmpty">
+          <div class="reader-empty-icon">◈</div>
+          <p class="reader-empty-label">Select a story</p>
+        </div>
+        <div class="story-content" id="storyContent" style="display:none"></div>
+      </div>
 
-  stories.forEach(story => {
-    const el = document.createElement('div');
-    el.className = 'story-item';
+      <!-- About view -->
+      <div class="view" id="view-about">
+        <div class="about-view">
+          <div class="about-left">
+            <div class="about-photo-wrap">
+              <img src="author.jpg" alt="Kristopher Pearcey">
+            </div>
+            <nav class="about-photo-links" aria-label="Contact links">
+              <div class="about-contact-row">
+                <span class="about-contact-label">Email</span>
+                <a href="/cdn-cgi/l/email-protection#fc9499909093bc978e958f88938c94998e8c999d8e9f9985d29f9391" class="about-contact-value">kris@pearcey.ca</a>
+              </div>
+              <div class="about-contact-row">
+                <span class="about-contact-label">Newsletter</span>
+                <a href="#" class="about-contact-value">Subscribe</a>
+              </div>
+              <div class="about-contact-row">
+                <span class="about-contact-label">Chess</span>
+                <a href="https://chess.com/member/krisper" target="_blank" class="about-contact-value">chess.com/krisper</a>
+              </div>
+            </nav>
+          </div>
+          <div class="about-right">
+            <p class="about-label">About the author</p>
+            <h2 class="about-headline">Stories shaped by silence,<br>distance, and the things<br>that stay just out of sight.</h2>
+            <div class="about-rule" aria-hidden="true"></div>
+            <p class="about-body">Kristopher Pearcey writes liminal and cosmic horror rooted in the woods, the coastlines, and the quieter places of Newfoundland. His work leans toward slow dread, uneasy atmosphere, and the sense that something has shifted, even when nothing visible has changed.</p>
+            <p class="about-body">His stories are interested in what lingers beneath ordinary life: the wrong turn that feels noticed, the room that seems smaller on the way out, the silence that stops feeling empty. Rather than rushing toward explanation, they tend to stay with uncertainty — and let it grow.</p>
+            <p class="about-body"><em>Quiet Places</em> is a collection built from those spaces: cabins, ponds, tree lines, hallways, thresholds, and all the places that should feel familiar but do not.</p>
+          </div>
+        </div>
+      </div>
 
-    el.innerHTML = `
-      <div class="story-title">${story.title}</div>
-      <div class="story-meta">${story.pages} pages — ${story.date}</div>
-    `;
+      <!-- Contact view (removed) -->
 
-    el.onclick = () => openStory(story);
-    list.appendChild(el);
-  });
-}
+    </main>
 
-/* OPEN STORY */
-async function openStory(story) {
-  const reader = document.getElementById('reader');
-  reader.innerHTML = `<div class="loading">Loading...</div>`;
+    <!-- Back to top -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+      <i class="fa-solid fa-chevron-up"></i>
+    </button>
 
-  try {
-    const res = await fetch(story.markdown);
-    if (!res.ok) throw new Error('Missing markdown');
+    <!-- Sidebar (right side, overlay) -->
+    <aside class="sidebar collapsed" id="sidebar">
+      <div class="sidebar-controls">
+        <div class="search-wrap">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.3"/>
+            <line x1="8.5" y1="8.5" x2="11" y2="11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          <input class="sidebar-search" id="searchInput" type="text" placeholder="Search stories…" autocomplete="off" />
+        </div>
+        <select class="sidebar-sort" id="sortSelect">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="az">Title A–Z</option>
+        </select>
+      </div>
+      <div class="story-list" id="storyList"></div>
+    </aside>
 
-    const md = await res.text();
-    reader.innerHTML = parseMarkdown(md);
+  </div>
 
-  } catch {
-    reader.innerHTML = `<div style="opacity:.6;">Failed to load story.</div>`;
-  }
-}
+    
+  <script>
+    let STORIES = [];
 
-/* MARKDOWN PARSER */
-function parseMarkdown(md) {
-  return md
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-    .replace(/\n\n/gim, '</p><p>')
-    .replace(/^/, '<p>')
-    .replace(/$/, '</p>');
-}
+    function formatDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso + 'T12:00:00');
+      if (Number.isNaN(d.getTime())) return iso;
+      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
 
-/* NAVIGATION (FIXED) */
-document.querySelectorAll('[data-nav]').forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
+    function estimateReadTime(body) {
+      return Math.max(1, Math.round(String(body || '').trim().split(/\s+/).filter(Boolean).length / 200));
+    }
 
-    const target = link.getAttribute('data-nav');
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
-    document.querySelectorAll('.page').forEach(p => {
-      p.style.display = 'none';
+    function renderInlineMarkdown(text) {
+      return text
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    }
+
+    function renderMarkdown(text) {
+      const source = String(text || '').replace(/\r\n?/g, '\n').trim();
+      if (!source) return '<p>No story content found.</p>';
+
+      const blocks = source.split(/\n\n+/);
+      return blocks.map(block => {
+        const lines = block.split('\n');
+        if (/^###\s+/.test(block)) return `<h3>${renderInlineMarkdown(escapeHtml(block.replace(/^###\s+/, '')))}</h3>`;
+        if (/^##\s+/.test(block)) return `<h2>${renderInlineMarkdown(escapeHtml(block.replace(/^##\s+/, '')))}</h2>`;
+        if (/^#\s+/.test(block)) return `<h1>${renderInlineMarkdown(escapeHtml(block.replace(/^#\s+/, '')))}</h1>`;
+        if (lines.every(line => /^[-*]\s+/.test(line))) {
+          const items = lines.map(line => `<li>${renderInlineMarkdown(escapeHtml(line.replace(/^[-*]\s+/, '')))}</li>`).join('');
+          return `<ul>${items}</ul>`;
+        }
+        return `<p>${renderInlineMarkdown(escapeHtml(block).replace(/\n/g, '<br>'))}</p>`;
+      }).join('\n');
+    }
+
+    function normalizeStory(meta) {
+      return {
+        slug: meta.slug,
+        title: meta.title || meta.slug,
+        date: meta.date || '',
+        pages: meta.pages || 0,
+        excerpt: meta.excerpt || '',
+        markdown: meta.markdown || `stories/${meta.slug}.md`,
+        pdf: meta.pdf || `stories/${meta.slug}.pdf`,
+        epub: meta.epub || `stories/${meta.slug}.epub`,
+        body: ''
+      };
+    }
+
+    let currentSlug = null;
+    let currentView = 'home';
+    let sortMode = 'newest';
+    let searchQuery = '';
+    let sidebarOpen = false;
+
+    const sidebar      = document.getElementById('sidebar');
+    const storyList    = document.getElementById('storyList');
+    const searchInput  = document.getElementById('searchInput');
+    const sortSelect   = document.getElementById('sortSelect');
+    const reader       = document.getElementById('reader');
+    const readerEmpty  = document.getElementById('readerEmpty');
+    const storyContent = document.getElementById('storyContent');
+    const burgerBtn    = document.getElementById('burgerBtn');
+    const backToTop    = document.getElementById('backToTop');
+
+    const ctaBar   = document.getElementById('ctaBar');
+    const ctaClose = document.getElementById('ctaClose');
+    if (ctaBar && ctaClose) {
+      document.body.classList.add('cta-visible');
+      ctaClose.addEventListener('click', () => {
+        ctaBar.classList.add('closed');
+        document.body.classList.remove('cta-visible');
+      });
+    }
+
+    if (reader && backToTop) {
+      reader.addEventListener('scroll', () => {
+        backToTop.classList.toggle('visible', reader.scrollTop > 300);
+      });
+      backToTop.addEventListener('click', () => reader.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+
+    function openSidebar() {
+      sidebarOpen = true;
+      sidebar.classList.remove('collapsed');
+      burgerBtn.classList.add('open');
+      document.body.classList.add('sidebar-open');
+    }
+
+    function closeSidebar() {
+      sidebarOpen = false;
+      sidebar.classList.add('collapsed');
+      burgerBtn.classList.remove('open');
+      document.body.classList.remove('sidebar-open');
+    }
+
+    burgerBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      sidebarOpen ? closeSidebar() : openSidebar();
     });
 
-    document.getElementById(target).style.display = 'block';
-  });
-});
+    reader.addEventListener('click', () => {
+      if (sidebarOpen && currentView !== 'stories') closeSidebar();
+    });
 
-/* INIT */
-loadStories();
-</script>
+    function switchView(view) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      const target = document.getElementById('view-' + view);
+      if (target) target.classList.add('active');
+
+      document.querySelectorAll('.nav a[data-view]').forEach(el => {
+        el.classList.toggle('nav-active', el.dataset.view === view);
+      });
+
+      const titles = {
+        home: 'Quiet Places — Kristopher Pearcey',
+        stories: 'Stories — Kristopher Pearcey',
+        about: 'About — Kristopher Pearcey'
+      };
+      document.title = titles[view] || 'Kristopher Pearcey';
+      currentView = view;
+      reader.scrollTop = 0;
+
+      if (view === 'stories') openSidebar();
+      else closeSidebar();
+    }
+
+    document.querySelectorAll('[data-view]').forEach(el => {
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        switchView(el.dataset.view);
+      });
+    });
+
+    async function loadStoriesIndex() {
+      const res = await fetch('stories/index.json', { cache: 'no-store' });
+      if (!res.ok) {
+        throw new Error(`Could not load stories/index.json (HTTP ${res.status})`);
+      }
+
+      const data = await res.json();
+      if (!Array.isArray(data)) {
+        throw new Error('stories/index.json must contain an array');
+      }
+
+      STORIES = data.map(normalizeStory);
+    }
+
+    function getFilteredSorted() {
+      let list = [...STORIES];
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        list = list.filter(s => s.title.toLowerCase().includes(q));
+      }
+      if (sortMode === 'newest') list.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      else if (sortMode === 'oldest') list.sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      else if (sortMode === 'az') list.sort((a, b) => a.title.localeCompare(b.title));
+      return list;
+    }
+
+    function renderList() {
+      const list = getFilteredSorted();
+      storyList.innerHTML = '';
+
+      if (!STORIES.length) {
+        storyList.innerHTML = '<p style="opacity:.55; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; padding: 0 18px;">No stories loaded</p>';
+        return;
+      }
+
+      if (!list.length) {
+        storyList.innerHTML = '<p style="opacity:.55; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; padding: 0 18px;">No matching stories</p>';
+        return;
+      }
+
+      list.forEach(story => {
+        const item = document.createElement('div');
+        item.className = 'story-item' + (story.slug === currentSlug ? ' active' : '');
+        item.innerHTML = `
+          <div class="story-item-title">${story.title}</div>
+          <div class="story-item-meta">${formatDate(story.date)} &middot; ${story.pages} pages</div>
+        `;
+        item.addEventListener('click', (event) => {
+          event.stopPropagation();
+          switchView('stories');
+          selectStory(story.slug);
+        });
+        storyList.appendChild(item);
+      });
+    }
+
+    async function loadStoryBody(story) {
+      if (!story.markdown) return '';
+      const res = await fetch(story.markdown, { cache: 'no-store' });
+      if (!res.ok) {
+        throw new Error(`Could not load ${story.markdown} (HTTP ${res.status})`);
+      }
+      const text = await res.text();
+      story.body = text;
+      return text;
+    }
+
+    async function selectStory(slug) {
+      currentSlug = slug;
+      renderList();
+      const story = STORIES.find(s => s.slug === slug);
+      if (!story) return;
+
+      readerEmpty.style.display = 'none';
+      storyContent.style.display = 'block';
+      storyContent.innerHTML = `
+        <div class="story-content-header">
+          <h1 class="story-content-title">${story.title}</h1>
+          <div class="story-content-meta">
+            <span>${formatDate(story.date)}</span>
+            <span class="story-content-meta-dot"></span>
+            <span>${story.pages} pages</span>
+            <span class="story-content-meta-dot"></span>
+            <span>&#9201; Loading...</span>
+          </div>
+          ${story.excerpt ? `<blockquote class="story-content-excerpt">${story.excerpt}</blockquote>` : ''}
+          <div class="story-downloads">
+            <a href="${story.pdf || '#'}" download class="btn">PDF</a>
+            <a href="${story.epub || '#'}" download class="btn">EPUB</a>
+          </div>
+        </div>
+        <div class="story-content-divider"></div>
+        <div class="story-body"><p>Loading story…</p></div>
+      `;
+
+      try {
+        const body = await loadStoryBody(story);
+        storyContent.innerHTML = `
+          <div class="story-content-header">
+            <h1 class="story-content-title">${story.title}</h1>
+            <div class="story-content-meta">
+              <span>${formatDate(story.date)}</span>
+              <span class="story-content-meta-dot"></span>
+              <span>${story.pages} pages</span>
+              <span class="story-content-meta-dot"></span>
+              <span>&#9201; ${estimateReadTime(body)} min</span>
+            </div>
+            ${story.excerpt ? `<blockquote class="story-content-excerpt">${story.excerpt}</blockquote>` : ''}
+            <div class="story-downloads">
+              <a href="${story.pdf || '#'}" download class="btn">PDF</a>
+              <a href="${story.epub || '#'}" download class="btn">EPUB</a>
+            </div>
+          </div>
+          <div class="story-content-divider"></div>
+          <div class="story-body">${renderMarkdown(body)}</div>
+        `;
+      } catch (error) {
+        console.error(error);
+        storyContent.innerHTML = `
+          <div class="story-content-header">
+            <h1 class="story-content-title">${story.title}</h1>
+            <div class="story-content-meta">
+              <span>${formatDate(story.date)}</span>
+              <span class="story-content-meta-dot"></span>
+              <span>${story.pages} pages</span>
+            </div>
+            ${story.excerpt ? `<blockquote class="story-content-excerpt">${story.excerpt}</blockquote>` : ''}
+          </div>
+          <div class="story-content-divider"></div>
+          <div class="story-body">
+            <p>Failed to load <code>${escapeHtml(story.markdown || '')}</code>.</p>
+          </div>
+        `;
+      }
+
+      reader.scrollTop = 0;
+    }
+
+    function showStoriesLoadError(message) {
+      storyList.innerHTML = `<p style="opacity:.65; font-size:.72rem; line-height:1.7; letter-spacing:.12em; text-transform:uppercase; padding: 0 18px;">${escapeHtml(message)}</p>`;
+      readerEmpty.style.display = 'flex';
+      storyContent.style.display = 'none';
+      readerEmpty.innerHTML = `
+        <div class="reader-empty-icon">◈</div>
+        <p class="reader-empty-label">No stories loaded</p>
+        <p style="max-width:520px; opacity:.6; line-height:1.7; text-transform:none; letter-spacing:.02em;">${escapeHtml(message)}</p>
+      `;
+    }
+
+    searchInput.addEventListener('input', () => {
+      searchQuery = searchInput.value;
+      renderList();
+    });
+
+    sortSelect.addEventListener('change', () => {
+      sortMode = sortSelect.value;
+      renderList();
+    });
+
+    (async function init() {
+      switchView('home');
+      try {
+        await loadStoriesIndex();
+        renderList();
+        const first = getFilteredSorted()[0];
+        if (first) {
+          await selectStory(first.slug);
+        } else {
+          showStoriesLoadError('stories/index.json loaded, but it does not contain any stories.');
+        }
+      } catch (error) {
+        console.error(error);
+        STORIES = [];
+        renderList();
+        showStoriesLoadError('Could not load stories/index.json. Make sure you are serving the site over HTTP and that /stories/index.json exists.');
+      }
+    })();
+  </script>
 
 </body>
 </html>
