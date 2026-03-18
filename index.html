@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kristopher Pearcey</title>
+
+<style>
+:root{
+  --text:#eaeaea;
+  --muted:#9a9a9a;
+  --bg:#0a0a0a;
+  --accent:#cfcfcf;
+}
+
+body{
+  margin:0;
+  font-family: 'Cormorant Garamond', serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* NAV */
+nav{
+  position:fixed;
+  top:24px;
+  right:32px;
+  z-index:10;
+}
+
+nav a{
+  margin-left:24px;
+  text-decoration:none;
+  color:var(--muted);
+  cursor:pointer;
+}
+
+nav a:hover{
+  color:var(--text);
+}
+
+/* NAME */
+.header{
+  position:fixed;
+  top:24px;
+  left:32px;
+  font-weight:700;
+  letter-spacing:2px;
+  z-index:10;
+}
+
+/* PAGES */
+.page{
+  display:none;
+  padding:120px 32px 60px;
+  max-width:900px;
+  margin:auto;
+}
+
+#home{
+  display:block;
+  text-align:center;
+  margin-top:120px;
+}
+
+/* STORIES LIST */
+.story-item{
+  padding:16px 0;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  cursor:pointer;
+}
+
+.story-title{
+  font-size:20px;
+}
+
+.story-meta{
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* READER */
+#reader{
+  margin-top:40px;
+  line-height:1.7;
+}
+
+.loading{
+  opacity:.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">KRISTOPHER PEARCEY</div>
+
+<nav>
+  <a data-nav="home">Home</a>
+  <a data-nav="about">About</a>
+  <a data-nav="stories">Stories</a>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="page">
+  <h1>Quiet Places</h1>
+  <p>To be released</p>
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="page">
+  <p>Author of liminal and cosmic horror.</p>
+</div>
+
+<!-- STORIES -->
+<div id="stories" class="page">
+  <div id="storyList"></div>
+  <div id="reader"></div>
+</div>
+
+<script>
+let STORIES = [];
+
+/* LOAD STORIES */
+async function loadStories() {
+  try {
+    const res = await fetch('stories/index.json');
+
+    if (!res.ok) throw new Error('Missing index.json');
+
+    STORIES = await res.json();
+    renderStories(STORIES);
+
+  } catch (err) {
+    console.error(err);
+
+    document.getElementById('storyList').innerHTML = `
+      <div style="opacity:.6;">
+        No stories found.<br>
+        Ensure /stories/index.json exists.
+      </div>
+    `;
+  }
+}
+
+/* RENDER LIST */
+function renderStories(stories) {
+  const list = document.getElementById('storyList');
+  list.innerHTML = '';
+
+  stories.forEach(story => {
+    const el = document.createElement('div');
+    el.className = 'story-item';
+
+    el.innerHTML = `
+      <div class="story-title">${story.title}</div>
+      <div class="story-meta">${story.pages} pages — ${story.date}</div>
+    `;
+
+    el.onclick = () => openStory(story);
+    list.appendChild(el);
+  });
+}
+
+/* OPEN STORY */
+async function openStory(story) {
+  const reader = document.getElementById('reader');
+  reader.innerHTML = `<div class="loading">Loading...</div>`;
+
+  try {
+    const res = await fetch(story.markdown);
+    if (!res.ok) throw new Error('Missing markdown');
+
+    const md = await res.text();
+    reader.innerHTML = parseMarkdown(md);
+
+  } catch {
+    reader.innerHTML = `<div style="opacity:.6;">Failed to load story.</div>`;
+  }
+}
+
+/* MARKDOWN PARSER */
+function parseMarkdown(md) {
+  return md
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+    .replace(/\n\n/gim, '</p><p>')
+    .replace(/^/, '<p>')
+    .replace(/$/, '</p>');
+}
+
+/* NAVIGATION (FIXED) */
+document.querySelectorAll('[data-nav]').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+
+    const target = link.getAttribute('data-nav');
+
+    document.querySelectorAll('.page').forEach(p => {
+      p.style.display = 'none';
+    });
+
+    document.getElementById(target).style.display = 'block';
+  });
+});
+
+/* INIT */
+loadStories();
+</script>
+
+</body>
+</html>
