@@ -386,6 +386,7 @@
     }
 
     .posts.view-cards .post {
+      cursor: pointer;
       display: grid;
       grid-template-columns: 42px minmax(0, 1fr);
       gap: 14px;
@@ -458,11 +459,24 @@
 
     .post:hover .post__title {
       opacity: 0.92;
-      text-shadow: 0 0 10px rgba(249,249,249,0.04);
+    }
+
+    .post:hover .post__meta,
+    .post:hover .post__excerpt,
+    .post:hover .post__year,
+    .post:hover .post__shortdate {
+      color: var(--text);
     }
 
     body.light .post:hover .post__title {
       text-shadow: 0 0 10px rgba(25,25,25,0.03);
+    }
+
+    body.light .post:hover .post__meta,
+    body.light .post:hover .post__excerpt,
+    body.light .post:hover .post__year,
+    body.light .post:hover .post__shortdate {
+      text-shadow: 0 0 10px rgba(25,25,25,0.02);
     }
 
     .post__meta {
@@ -550,6 +564,70 @@
       letter-spacing: -0.02em;
     }
 
+    .md-content {
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.78;
+      letter-spacing: -0.02em;
+    }
+
+    .md-content > :first-child {
+      margin-top: 10px;
+    }
+
+    .md-content h1,
+    .md-content h2,
+    .md-content h3 {
+      color: #f3f3f1;
+      letter-spacing: -0.04em;
+      line-height: 1.08;
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+
+    body.light .md-content h1,
+    body.light .md-content h2,
+    body.light .md-content h3 {
+      color: #111214;
+    }
+
+    .md-content h1 { font-size: 30px; }
+    .md-content h2 { font-size: 24px; margin-top: 32px; }
+    .md-content h3 { font-size: 20px; margin-top: 26px; }
+
+    .md-content p,
+    .md-content ul,
+    .md-content ol,
+    .md-content blockquote {
+      margin: 0 0 18px;
+      color: #88888d;
+    }
+
+    body.light .md-content p,
+    body.light .md-content ul,
+    body.light .md-content ol,
+    body.light .md-content blockquote {
+      color: #6f6f74;
+    }
+
+    .md-content a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .md-content blockquote {
+      margin-left: 0;
+      padding-left: 14px;
+      border-left: 1px solid var(--line);
+    }
+
+    .md-content img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 20px 0;
+    }
+
     .plain-block strong {
       display: block;
       margin-top: 10px;
@@ -567,6 +645,7 @@
     }
 
     .contact-item {
+      cursor: pointer;
       display: grid;
       grid-template-columns: 42px minmax(0, 1fr);
       gap: 14px;
@@ -633,6 +712,15 @@
     }
 
     .contact-item:hover .contact-item__title {
+      opacity: 0.92;
+    }
+
+    .contact-item:hover .contact-item__meta,
+    .contact-item:hover .contact-item__excerpt {
+      color: var(--text);
+    }
+
+    body.light .contact-item:hover .contact-item__title {
       opacity: 0.92;
       text-shadow: 0 0 10px rgba(249,249,249,0.04);
     }
