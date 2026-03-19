@@ -1,0 +1,6 @@
+{
+  "stories": [
+    { "title": "Quiet Places", "slug": "quiet-places", "file": "quiet-places.md" },
+    { "title": "The Long Hall", "slug": "the-long-hall", "file": "the-long-hall.md" }
+  ]
+}
