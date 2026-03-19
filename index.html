@@ -814,6 +814,7 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     const postsData = [
       {
@@ -878,6 +879,9 @@
     const storiesSection = document.getElementById('storiesSection');
     const controlsSection = document.querySelector('.controls');
     const sectionLinks = document.querySelectorAll('[data-section]');
+    const brandHome = document.getElementById('brandHome');
+    const homeAnchor = document.getElementById('home');
+    const pageEl = document.querySelector('.page');
 
     function getIconMarkup(type) {
       const icons = {
@@ -910,15 +914,20 @@
       return icons[type] || icons.document;
     }
 
+    function slugify(title) {
+      return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    }
+
     function renderPosts(items) {
       const isRows = postsEl.classList.contains('view-rows');
 
       postsEl.innerHTML = items.map(post => {
-        const file = `stories/${post.title.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.md`;
+        const slug = slugify(post.title);
+        const file = `stories/${slug}.md`;
 
         if (isRows) {
           return `
-            <article class="post" data-file="${file}">
+            <article class="post" data-slug="${slug}" data-file="${file}" role="button" tabindex="0">
               <div class="post__year">${post.year}</div>
               <h2 class="post__title">${post.title}</h2>
               <div class="post__shortdate">${post.shortDate}</div>
@@ -934,7 +943,7 @@
         }
 
         return `
-          <article class="post" data-file="${file}">
+          <article class="post" data-slug="${slug}" data-file="${file}" role="button" tabindex="0">
             <div class="post__icon">${getIconMarkup(post.icon)}</div>
             <div>
               <h2 class="post__title">${post.title}</h2>
@@ -950,18 +959,12 @@
       }).join('');
 
       document.querySelectorAll('.post').forEach(el => {
-        el.addEventListener('click', async () => {
-          const file = el.dataset.file;
-          try {
-            const res = await fetch(file);
-            const text = await res.text();
-            dynamicSection.style.display = 'block';
-            dynamicSection.innerHTML = `<div class="md-content">${marked.parse(text)}</div>`;
-            controlsSection.style.display = 'none';
-            storiesSection.style.display = 'none';
-          } catch (e) {
-            dynamicSection.style.display = 'block';
-            dynamicSection.innerHTML = `<p>Unable to load story.</p>`;
+        const open = () => loadStory(el.dataset.slug, el.dataset.file);
+        el.addEventListener('click', open);
+        el.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            open();
           }
         });
       });
@@ -1008,7 +1011,7 @@
             <article class="contact-item">
               <div class="contact-item__icon"><i class="fa-brands fa-goodreads-g"></i></div>
               <div class="contact-item__main">
-                <h3 class="contact-item__title"><a href="https://www.goodreads.com/" target="_blank">Goodreads</a></h3>
+                <h3 class="contact-item__title"><a href="https://www.goodreads.com/" target="_blank" rel="noopener noreferrer">Goodreads</a></h3>
                 <div class="contact-item__meta">Books and shelves</div>
               </div>
               <p class="contact-item__excerpt">Proof that the dread is at least well read.</p>
@@ -1017,7 +1020,7 @@
             <article class="contact-item">
               <div class="contact-item__icon"><i class="fa-solid fa-chess-knight"></i></div>
               <div class="contact-item__main">
-                <h3 class="contact-item__title"><a href="https://www.chess.com/" target="_blank">Chess.com</a></h3>
+                <h3 class="contact-item__title"><a href="https://www.chess.com/" target="_blank" rel="noopener noreferrer">Chess.com</a></h3>
                 <div class="contact-item__meta">Play and puzzles</div>
               </div>
               <p class="contact-item__excerpt">Find out whether the writer of dread is any good at the game of it.</p>
@@ -1026,6 +1029,46 @@
         `
       }
     };
+
+    async function fetchStoriesIndex() {
+      try {
+        const response = await fetch('stories/stories.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error('No stories index');
+        const data = await response.json();
+        return Array.isArray(data) ? data : (Array.isArray(data.stories) ? data.stories : []);
+      } catch {
+        return [];
+      }
+    }
+
+    async function loadStory(slug, fallbackFile) {
+      let file = fallbackFile;
+
+      try {
+        const storiesIndex = await fetchStoriesIndex();
+        const match = storiesIndex.find(item => item.slug === slug || slugify(item.title || '') === slug);
+        if (match && match.file) {
+          file = `stories/${match.file}`;
+        }
+      } catch {}
+
+      try {
+        const res = await fetch(file, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to load story');
+        const text = await res.text();
+        dynamicSection.style.display = 'block';
+        dynamicSection.innerHTML = `<div class="md-content">${marked.parse(text)}</div>`;
+        controlsSection.style.display = 'none';
+        storiesSection.style.display = 'none';
+        document.querySelectorAll('.nav__link').forEach(link => link.classList.remove('is-active'));
+        pageEl.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (error) {
+        dynamicSection.style.display = 'block';
+        dynamicSection.innerHTML = `<p>Unable to load story.</p>`;
+        controlsSection.style.display = 'none';
+        storiesSection.style.display = 'none';
+      }
+    }
 
     function openSection(name) {
       const section = sectionContent[name];
@@ -1037,6 +1080,7 @@
       document.querySelectorAll('.nav__link').forEach(link => link.classList.remove('is-active'));
       const active = document.querySelector(`[data-section="${name}"]`);
       if (active) active.classList.add('is-active');
+      pageEl.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function activateHome() {
@@ -1064,24 +1108,29 @@
     }
 
     searchInput.addEventListener('input', refreshPosts);
+
     sectionLinks.forEach(link => {
       link.addEventListener('click', event => {
         event.preventDefault();
         openSection(link.dataset.section);
       });
     });
+
     document.querySelector('.nav__link[href="#top"]').addEventListener('click', event => {
       event.preventDefault();
       activateHome();
-    document.getElementById('brandHome').addEventListener('click', e => {
-      e.preventDefault();
+      homeAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    brandHome.addEventListener('click', event => {
+      event.preventDefault();
       activateHome();
-      document.getElementById('home').scrollIntoView({ behavior: 'smooth' });
+      homeAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+
     cardsViewBtn.addEventListener('click', () => setView('cards'));
     rowsViewBtn.addEventListener('click', () => setView('rows'));
+
     modeToggle.addEventListener('click', () => {
       const next = document.body.classList.contains('light') ? 'dark' : 'light';
       setTheme(next);
@@ -1092,7 +1141,6 @@
     setTheme(storedTheme || (prefersLight ? 'light' : 'dark'));
     setView(localStorage.getItem('kp-view') || 'cards');
     activateHome();
-    </script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </script>
 </body>
 </html>
