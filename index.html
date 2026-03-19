@@ -6,7 +6,7 @@
   <title>Kristopher Pearcey</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root {
@@ -40,6 +40,7 @@
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     html, body { overflow: hidden; }
+
     body {
       margin: 0;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -52,6 +53,30 @@
 
     a { color: inherit; text-decoration: none; }
     button, input { font: inherit; }
+
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 16px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+    }
+
+    .view-toggle .material-symbols-outlined.flip-horizontal {
+      transform: scaleX(-1);
+    }
 
     .topbar {
       position: sticky;
@@ -103,8 +128,6 @@
       text-shadow: 0 0 10px rgba(255,255,255,0.06);
     }
 
-    .topbar__cta:hover svg { }
-
     .page {
       height: calc(100vh - 38px);
       padding-top: 0;
@@ -133,8 +156,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-top: 0;
-      margin-bottom: 0;
+      margin: 0;
       position: sticky;
       top: 0;
       z-index: 20;
@@ -156,17 +178,6 @@
       background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 16%, transparent) 0%, transparent 100%);
     }
 
-    .nav::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 100%;
-      height: 20px;
-      pointer-events: none;
-      background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 16%, transparent) 0%, transparent 100%);
-    }
-
     .brand {
       font-size: 16px;
       line-height: 1;
@@ -174,6 +185,7 @@
       letter-spacing: -0.035em;
       color: var(--muted);
       transition: color var(--fast) var(--ease), opacity var(--fast) var(--ease), text-shadow var(--fast) var(--ease);
+      flex: 0 0 auto;
     }
 
     .brand:hover {
@@ -228,6 +240,7 @@
       align-items: center;
       justify-content: center;
       margin-left: 2px;
+      flex: 0 0 auto;
     }
 
     .mode-toggle svg {
@@ -237,16 +250,15 @@
       transition: opacity var(--medium) var(--ease), transform var(--medium) var(--ease);
     }
 
-    .mode-toggle .sun { opacity: 0; transform: rotate(-25deg) scale(0.82); }
-    .mode-toggle .moon { opacity: 1; transform: rotate(0deg) scale(1); }
-    body.light .mode-toggle .sun { opacity: 1; transform: rotate(0deg) scale(1); }
-    body.light .mode-toggle .moon { opacity: 0; transform: rotate(25deg) scale(0.82); }
+    .mode-toggle .sun { opacity: 1; transform: rotate(0deg) scale(1); }
+    .mode-toggle .moon { opacity: 0; transform: rotate(25deg) scale(0.82); }
+    body.light .mode-toggle .sun { opacity: 0; transform: rotate(-25deg) scale(0.82); }
+    body.light .mode-toggle .moon { opacity: 1; transform: rotate(0deg) scale(1); }
 
     .hero {
       position: relative;
       height: 246px;
-      margin-bottom: 26px;
-      margin-top: 0;
+      margin: 0 0 26px;
       overflow: hidden;
       border-radius: 2px;
     }
@@ -263,6 +275,7 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      background: var(--bg);
       filter: saturate(0.9) contrast(0.98) brightness(0.84);
     }
 
@@ -314,6 +327,7 @@
       position: relative;
       flex: 1 1 auto;
       max-width: 210px;
+      min-width: 0;
     }
 
     .search svg {
@@ -330,7 +344,7 @@
     .search input {
       width: 100%;
       height: 28px;
-      padding: 0 0 0 28px;
+      padding: 0 22px 0 28px;
       border: 0;
       outline: none;
       background: transparent;
@@ -340,7 +354,39 @@
       letter-spacing: -0.02em;
     }
 
-    .search input::placeholder { color: var(--muted); opacity: 1; }
+    .search input::placeholder {
+      color: var(--muted);
+      opacity: 1;
+    }
+
+    .search input[type="search"]::-webkit-search-decoration,
+    .search input[type="search"]::-webkit-search-results-button,
+    .search input[type="search"]::-webkit-search-results-decoration {
+      display: none;
+    }
+
+    .search input[type="search"]::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      margin-left: 8px;
+      cursor: pointer;
+      background-color: var(--muted);
+      opacity: 1;
+      -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'><path d='M4 4l8 8'/><path d='M12 4L4 12'/></svg>");
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      -webkit-mask-size: 14px 14px;
+      mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'><path d='M4 4l8 8'/><path d='M12 4L4 12'/></svg>");
+      mask-repeat: no-repeat;
+      mask-position: center;
+      mask-size: 14px 14px;
+    }
+
+    .search input[type="search"]::-webkit-search-cancel-button:hover {
+      background-color: var(--text);
+    }
 
     .view-toggle {
       display: inline-flex;
@@ -380,6 +426,10 @@
       display: block;
     }
 
+    .view-toggle .material-symbols-outlined {
+      font-size: 16px;
+    }
+
     .posts {
       display: grid;
       gap: 0;
@@ -399,6 +449,7 @@
     }
 
     .posts.view-rows .post {
+      cursor: pointer;
       display: grid;
       grid-template-columns: 54px minmax(0, 1fr) 56px;
       align-items: center;
@@ -411,17 +462,40 @@
       border-top: 0;
     }
 
-    .post__icon {
+    .post__icon,
+    .contact-item__icon {
       width: 34px;
       height: 48px;
-      border-radius: 4px;
-      border: 1px solid var(--line);
+      border-radius: 1px;
+      border: 0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       color: var(--muted);
       overflow: hidden;
       flex: 0 0 auto;
+    }
+
+    .post__icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .post__icon-fallback {
+      width: 100%;
+      height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .post__icon-fallback svg {
+      width: 18px;
+      height: 18px;
+      display: block;
     }
 
     .post__icon svg {
@@ -434,7 +508,7 @@
       margin: 0;
       color: var(--text);
       letter-spacing: -0.035em;
-      transition: opacity var(--fast) var(--ease), text-shadow var(--fast) var(--ease);
+      transition: opacity var(--fast) var(--ease);
     }
 
     .posts.view-cards .post__title {
@@ -457,26 +531,13 @@
       font-weight: 700;
     }
 
-    .post:hover .post__title {
-      opacity: 0.92;
-    }
+    .post:hover .post__title { opacity: 0.92; }
 
     .post:hover .post__meta,
     .post:hover .post__excerpt,
     .post:hover .post__year,
     .post:hover .post__shortdate {
       color: var(--text);
-    }
-
-    body.light .post:hover .post__title {
-      text-shadow: 0 0 10px rgba(25,25,25,0.03);
-    }
-
-    body.light .post:hover .post__meta,
-    body.light .post:hover .post__excerpt,
-    body.light .post:hover .post__year,
-    body.light .post:hover .post__shortdate {
-      text-shadow: 0 0 10px rgba(25,25,25,0.02);
     }
 
     .post__meta {
@@ -507,13 +568,8 @@
       letter-spacing: -0.02em;
     }
 
-    .post__year {
-      justify-self: start;
-    }
-
-    .post__shortdate {
-      justify-self: end;
-    }
+    .post__year { justify-self: start; }
+    .post__shortdate { justify-self: end; }
 
     .post__excerpt {
       margin: 0;
@@ -525,11 +581,9 @@
       font-size: 15px;
       line-height: 1.72;
       max-width: none;
-      margin-left: 0;
-      padding-top: 0;
-      margin-top: 0;
+      margin: 0;
       grid-column: 1 / -1;
-      padding-left: 0;
+      padding: 0;
     }
 
     .posts.view-rows .post__excerpt,
@@ -551,17 +605,22 @@
 
     .empty.is-visible { display: block; }
 
-    .footer-sections {
-      display: grid;
-      gap: 18px;
-      margin-top: 42px;
-    }
-
     .plain-block {
       color: #88888d;
       font-size: 15px;
       line-height: 1.72;
       letter-spacing: -0.02em;
+    }
+
+    .plain-block strong {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 22px;
+      font-size: 17px;
+      line-height: 1.18;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.035em;
     }
 
     .md-content {
@@ -628,17 +687,6 @@
       margin: 20px 0;
     }
 
-    .plain-block strong {
-      display: block;
-      margin-top: 10px;
-      margin-bottom: 22px;
-      font-size: 17px;
-      line-height: 1.18;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.035em;
-    }
-
     .contact-list {
       display: grid;
       gap: 0;
@@ -657,19 +705,6 @@
       padding-top: 20px;
     }
 
-    .contact-item__icon {
-      width: 34px;
-      height: 48px;
-      border-radius: 4px;
-      border: 1px solid var(--line);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      overflow: hidden;
-      flex: 0 0 auto;
-    }
-
     .contact-item__main {
       min-height: 48px;
       display: flex;
@@ -684,7 +719,7 @@
       font-weight: 700;
       letter-spacing: -0.035em;
       color: var(--text);
-      transition: opacity var(--fast) var(--ease), text-shadow var(--fast) var(--ease);
+      transition: opacity var(--fast) var(--ease);
     }
 
     .contact-item__title a {
@@ -707,26 +742,13 @@
       color: var(--muted);
       letter-spacing: -0.02em;
       grid-column: 1 / -1;
-      padding-top: 0;
-      margin-top: 0;
     }
 
-    .contact-item:hover .contact-item__title {
-      opacity: 0.92;
-    }
+    .contact-item:hover .contact-item__title { opacity: 0.92; }
 
     .contact-item:hover .contact-item__meta,
     .contact-item:hover .contact-item__excerpt {
       color: var(--text);
-    }
-
-    body.light .contact-item:hover .contact-item__title {
-      opacity: 0.92;
-      text-shadow: 0 0 10px rgba(249,249,249,0.04);
-    }
-
-    body.light .contact-item:hover .contact-item__title {
-      text-shadow: 0 0 10px rgba(25,25,25,0.03);
     }
 
     @media (max-width: 720px) {
@@ -734,17 +756,38 @@
 
       .shell {
         width: min(var(--content-width), calc(100vw - 28px));
-        padding-top: 22px;
+        padding-top: 0;
       }
 
       .nav {
-        margin-bottom: 22px;
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 64px;
       }
 
       .nav__links {
-        gap: 12px;
+        gap: 16px;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        min-width: 0;
+      }
+
+      .nav__link,
+      .mode-toggle {
+        font-size: 15px;
+      }
+
+      .mode-toggle {
+        width: 18px;
+        height: 18px;
+        margin-left: 4px;
+      }
+
+      .mode-toggle svg {
+        width: 16px;
+        height: 16px;
       }
 
       .hero {
@@ -758,7 +801,43 @@
       }
 
       .controls {
+        gap: 16px;
+        align-items: center;
         margin-bottom: 16px;
+      }
+
+      .search {
+        max-width: none;
+        flex: 1 1 auto;
+      }
+
+      .search input {
+        height: 32px;
+        font-size: 15px;
+        padding: 0 24px 0 30px;
+      }
+
+      .search svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      .view-toggle {
+        gap: 16px;
+      }
+
+      .view-toggle button {
+        width: 20px;
+        height: 20px;
+      }
+
+      .view-toggle svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .view-toggle .material-symbols-outlined {
+        font-size: 19px;
       }
 
       .posts.view-rows .post {
@@ -767,31 +846,64 @@
     }
 
     @media (max-width: 520px) {
-      .topbar__cta {
-        font-size: 11px;
+      .topbar__cta { font-size: 11px; }
+      .shell { width: calc(100vw - 22px); }
+
+      .nav {
+        gap: 10px;
+        min-height: 62px;
       }
 
-      .shell {
-        width: calc(100vw - 22px);
+      .brand {
+        font-size: 17px;
+      }
+
+      .nav__links {
+        gap: 14px;
+      }
+
+      .nav__link,
+      .mode-toggle {
+        font-size: 15px;
+      }
+
+      .mode-toggle {
+        width: 18px;
+        height: 18px;
+      }
+
+      .mode-toggle svg {
+        width: 16px;
+        height: 16px;
       }
 
       .controls {
-        gap: 12px;
+        gap: 14px;
       }
 
       .search {
-        max-width: 170px;
+        max-width: none;
+      }
+
+      .view-toggle {
+        gap: 14px;
+      }
+
+      .view-toggle button {
+        width: 20px;
+        height: 20px;
       }
 
       .posts.view-cards .post {
-        grid-template-columns: 34px minmax(0, 1fr);
+        grid-template-columns: 42px minmax(0, 1fr);
         gap: 12px;
         padding: 14px 0 20px;
       }
 
-      .post__icon {
-        width: 28px;
-        height: 42px;
+      .post__icon,
+      .contact-item__icon {
+        width: 34px;
+        height: 48px;
       }
 
       .post__icon svg {
@@ -800,17 +912,59 @@
       }
 
       .posts.view-cards .post__title,
-      .posts.view-rows .post__title {
+      .posts.view-rows .post__title,
+      .contact-item__title {
         font-size: 15px;
       }
 
-      .posts.view-cards .post__excerpt {
+      .posts.view-cards .post__excerpt,
+      .contact-item__excerpt {
         font-size: 14px;
       }
 
       .posts.view-rows .post {
         grid-template-columns: 40px minmax(0, 1fr) 46px;
         gap: 8px;
+      }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      .topbar__cta,
+      .brand,
+      .nav__link,
+      .mode-toggle,
+      .view-toggle button,
+      .post__title,
+      .contact-item__title,
+      .contact-item__meta,
+      .contact-item__excerpt,
+      .post__meta,
+      .post__excerpt,
+      .post__year,
+      .post__shortdate {
+        text-shadow: none !important;
+      }
+
+      .topbar__cta:hover,
+      .brand:hover,
+      .nav__link:hover,
+      .mode-toggle:hover,
+      .view-toggle button:hover,
+      .post:hover .post__title,
+      .post:hover .post__meta,
+      .post:hover .post__excerpt,
+      .post:hover .post__year,
+      .post:hover .post__shortdate,
+      .contact-item:hover .contact-item__title,
+      .contact-item:hover .contact-item__meta,
+      .contact-item:hover .contact-item__excerpt {
+        color: inherit;
+        opacity: inherit;
+        text-shadow: none;
+      }
+
+      .search input[type="search"]::-webkit-search-cancel-button:hover {
+        background-color: var(--muted);
       }
     }
   </style>
@@ -875,17 +1029,14 @@
         </label>
 
         <div class="view-toggle" aria-label="Change list layout">
-          <button id="cardsViewBtn" class="is-active" type="button" aria-label="Three line list view">
+          <button id="cardsViewBtn" class="is-active" type="button" aria-label="Expanded story list view">
+            <span class="material-symbols-outlined flip-horizontal" aria-hidden="true">event_list</span>
+          </button>
+          <button id="rowsViewBtn" type="button" aria-label="Single line story list view">
             <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M2 3.25H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               <path d="M2 8H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               <path d="M2 12.75H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <button id="rowsViewBtn" type="button" aria-label="Two line compact list view">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M2.5 4.25H13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              <path d="M2.5 11.75H10.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
           </button>
         </div>
@@ -897,8 +1048,6 @@
         <div id="posts" class="posts view-cards"></div>
         <div id="emptyState" class="empty">No titles matched your search.</div>
       </section>
-
-      
     </main>
   </div>
 
@@ -1006,12 +1155,38 @@
       return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     }
 
+    function getStoryVisual(post, slug) {
+      const fallback = getIconMarkup(post.icon);
+      return `
+        <img
+          src="img/${slug}.jpg"
+          alt="${post.title} cover"
+          onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline-flex';"
+        />
+        <span class="post__icon-fallback">${fallback}</span>
+      `;
+    }
+
+    function bindPostEvents() {
+      document.querySelectorAll('.post').forEach((el) => {
+        const open = () => loadStory(el.dataset.slug, el.dataset.file);
+        el.addEventListener('click', open);
+        el.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            open();
+          }
+        });
+      });
+    }
+
     function renderPosts(items) {
       const isRows = postsEl.classList.contains('view-rows');
 
-      postsEl.innerHTML = items.map(post => {
+      postsEl.innerHTML = items.map((post) => {
         const slug = slugify(post.title);
         const file = `stories/${slug}.md`;
+        const visual = getStoryVisual(post, slug);
 
         if (isRows) {
           return `
@@ -1019,7 +1194,7 @@
               <div class="post__year">${post.year}</div>
               <h2 class="post__title">${post.title}</h2>
               <div class="post__shortdate">${post.shortDate}</div>
-              <div class="post__icon">${getIconMarkup(post.icon)}</div>
+              <div class="post__icon">${visual}</div>
               <div class="post__meta">
                 <span class="post__author">${post.author}</span>
                 <span class="post__metaDot">•</span>
@@ -1032,7 +1207,7 @@
 
         return `
           <article class="post" data-slug="${slug}" data-file="${file}" role="button" tabindex="0">
-            <div class="post__icon">${getIconMarkup(post.icon)}</div>
+            <div class="post__icon">${visual}</div>
             <div>
               <h2 class="post__title">${post.title}</h2>
               <div class="post__meta">
@@ -1046,17 +1221,7 @@
         `;
       }).join('');
 
-      document.querySelectorAll('.post').forEach(el => {
-        const open = () => loadStory(el.dataset.slug, el.dataset.file);
-        el.addEventListener('click', open);
-        el.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            open();
-          }
-        });
-      });
-
+      bindPostEvents();
       emptyStateEl.classList.toggle('is-visible', items.length === 0);
     }
 
@@ -1072,10 +1237,12 @@
     const sectionContent = {
       about: {
         title: 'About',
+        showTitle: true,
         body: `<p>Kristopher Pearcey writes atmospheric horror from Atlantic Canada, drawn to liminal spaces, coastal unease, and the kinds of places that feel wrong before they look wrong.</p>`
       },
       contact: {
         title: 'Contact',
+        showTitle: false,
         body: `
           <div class="contact-list">
             <article class="contact-item">
@@ -1086,7 +1253,6 @@
               </div>
               <p class="contact-item__excerpt">For inquiries, correspondence, and the usual human forms of contact.</p>
             </article>
-
             <article class="contact-item">
               <div class="contact-item__icon"><i class="fa-regular fa-paper-plane"></i></div>
               <div class="contact-item__main">
@@ -1095,7 +1261,6 @@
               </div>
               <p class="contact-item__excerpt">For new releases, updates, and anything that escapes the dark long enough to be announced.</p>
             </article>
-
             <article class="contact-item">
               <div class="contact-item__icon"><i class="fa-brands fa-goodreads-g"></i></div>
               <div class="contact-item__main">
@@ -1104,9 +1269,8 @@
               </div>
               <p class="contact-item__excerpt">Proof that the dread is at least well read.</p>
             </article>
-
             <article class="contact-item">
-              <div class="contact-item__icon"><i class="fa-solid fa-chess-knight"></i></div>
+              <div class="contact-item__icon"><i class="fa-regular fa-chess-knight"></i></div>
               <div class="contact-item__main">
                 <h3 class="contact-item__title"><a href="https://www.chess.com/" target="_blank" rel="noopener noreferrer">Chess.com</a></h3>
                 <div class="contact-item__meta">Play and puzzles</div>
@@ -1131,13 +1295,10 @@
 
     async function loadStory(slug, fallbackFile) {
       let file = fallbackFile;
-
       try {
         const storiesIndex = await fetchStoriesIndex();
         const match = storiesIndex.find(item => item.slug === slug || slugify(item.title || '') === slug);
-        if (match && match.file) {
-          file = `stories/${match.file}`;
-        }
+        if (match && match.file) file = `stories/${match.file}`;
       } catch {}
 
       try {
@@ -1150,7 +1311,7 @@
         storiesSection.style.display = 'none';
         document.querySelectorAll('.nav__link').forEach(link => link.classList.remove('is-active'));
         pageEl.scrollTo({ top: 0, behavior: 'smooth' });
-      } catch (error) {
+      } catch {
         dynamicSection.style.display = 'block';
         dynamicSection.innerHTML = `<p>Unable to load story.</p>`;
         controlsSection.style.display = 'none';
@@ -1162,7 +1323,7 @@
       const section = sectionContent[name];
       if (!section) return;
       dynamicSection.style.display = 'block';
-      dynamicSection.innerHTML = `<strong>${section.title}</strong>${section.body}`;
+      dynamicSection.innerHTML = section.showTitle === false ? section.body : `<strong>${section.title}</strong>${section.body}`;
       controlsSection.style.display = 'none';
       storiesSection.style.display = 'none';
       document.querySelectorAll('.nav__link').forEach(link => link.classList.remove('is-active'));
@@ -1198,19 +1359,19 @@
     searchInput.addEventListener('input', refreshPosts);
 
     sectionLinks.forEach(link => {
-      link.addEventListener('click', event => {
+      link.addEventListener('click', (event) => {
         event.preventDefault();
         openSection(link.dataset.section);
       });
     });
 
-    document.querySelector('.nav__link[href="#top"]').addEventListener('click', event => {
+    document.querySelector('.nav__link[href="#top"]').addEventListener('click', (event) => {
       event.preventDefault();
       activateHome();
       homeAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
-    brandHome.addEventListener('click', event => {
+    brandHome.addEventListener('click', (event) => {
       event.preventDefault();
       activateHome();
       homeAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1218,7 +1379,6 @@
 
     cardsViewBtn.addEventListener('click', () => setView('cards'));
     rowsViewBtn.addEventListener('click', () => setView('rows'));
-
     modeToggle.addEventListener('click', () => {
       const next = document.body.classList.contains('light') ? 'dark' : 'light';
       setTheme(next);
