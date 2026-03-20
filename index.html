@@ -460,7 +460,7 @@
     .posts.view-rows .post {
       cursor: pointer;
       display: grid;
-      grid-template-columns: 54px minmax(0, 1fr) 56px;
+      grid-template-columns: 54px minmax(0, 1fr) 72px;
       align-items: center;
       gap: 10px;
       padding: 12px 0;
@@ -545,7 +545,7 @@
     .post:hover .post__meta,
     .post:hover .post__excerpt,
     .post:hover .post__year,
-    .post:hover .post__shortdate {
+    .post:hover .post__pages {
       color: var(--text);
     }
 
@@ -569,7 +569,7 @@
     }
 
     .post__year,
-    .post__shortdate {
+    .post__pages {
       font-size: 13px;
       line-height: 1;
       font-weight: 500;
@@ -578,7 +578,11 @@
     }
 
     .post__year { justify-self: start; }
-    .post__shortdate { justify-self: end; }
+    .post__pages {
+      justify-self: end;
+      text-align: right;
+      white-space: nowrap;
+    }
 
     .post__excerpt {
       margin: 0;
@@ -599,7 +603,9 @@
     .posts.view-rows .post__icon,
     .posts.view-rows .post__metaDot,
     .posts.view-rows .post__author,
-    .posts.view-rows .post__formattedDate {
+    .posts.view-rows .post__formattedDate,
+    .posts.view-rows .post__monthYear,
+    .posts.view-rows .post__shortdate {
       display: none;
     }
 
@@ -850,7 +856,7 @@
       }
 
       .posts.view-rows .post {
-        grid-template-columns: 42px minmax(0, 1fr) 52px;
+        grid-template-columns: 42px minmax(0, 1fr) 62px;
       }
 
       .brand {
@@ -937,8 +943,12 @@
       }
 
       .posts.view-rows .post {
-        grid-template-columns: 40px minmax(0, 1fr) 46px;
+        grid-template-columns: 40px minmax(0, 1fr) 58px;
         gap: 8px;
+      }
+
+      .post__pages {
+        font-size: 12px;
       }
     }
 
@@ -957,7 +967,7 @@
       .post__meta,
       .post__excerpt,
       .post__year,
-      .post__shortdate {
+      .post__pages {
         -webkit-tap-highlight-color: transparent;
         tap-highlight-color: transparent;
         text-shadow: none !important;
@@ -982,8 +992,8 @@
       .post:active .post__excerpt,
       .post:hover .post__year,
       .post:active .post__year,
-      .post:hover .post__shortdate,
-      .post:active .post__shortdate,
+      .post:hover .post__pages,
+      .post:active .post__pages,
       .contact-item:hover .contact-item__title,
       .contact-item:active .contact-item__title,
       .contact-item:hover .contact-item__meta,
@@ -1096,9 +1106,9 @@
         title: 'Quiet Places',
         author: 'Kristopher Pearcey',
         date: '2026-03-14',
-        formattedDate: 'Mar 14, 2026',
+        monthYear: 'Mar 2026',
         year: '2026',
-        shortDate: '03/14',
+        pages: 31,
         excerpt: 'A novel-length descent into familiar places that become strange the longer anyone looks at them.',
         icon: 'document'
       },
@@ -1106,9 +1116,9 @@
         title: 'The Long Hall',
         author: 'Kristopher Pearcey',
         date: '2026-02-22',
-        formattedDate: 'Feb 22, 2026',
+        monthYear: 'Feb 2026',
         year: '2026',
-        shortDate: '02/22',
+        pages: 18,
         excerpt: 'A corridor keeps extending in the corner of a family home, always just past where anyone remembers it ending.',
         icon: 'lines'
       },
@@ -1116,9 +1126,9 @@
         title: 'Salt House',
         author: 'Kristopher Pearcey',
         date: '2026-01-30',
-        formattedDate: 'Jan 30, 2026',
+        monthYear: 'Jan 2026',
         year: '2026',
-        shortDate: '01/30',
+        pages: 14,
         excerpt: 'Wind, timber, and the sea begin answering each other after a winter power outage on the coast.',
         icon: 'grid'
       },
@@ -1126,9 +1136,9 @@
         title: 'The Visitor Log',
         author: 'Kristopher Pearcey',
         date: '2025-12-18',
-        formattedDate: 'Dec 18, 2025',
+        monthYear: 'Dec 2025',
         year: '2025',
-        shortDate: '12/18',
+        pages: 11,
         excerpt: 'The names in a museum sign-in book start appearing before the visitors themselves do.',
         icon: 'stack'
       },
@@ -1136,9 +1146,9 @@
         title: 'Blue Hour',
         author: 'Kristopher Pearcey',
         date: '2025-11-09',
-        formattedDate: 'Nov 9, 2025',
+        monthYear: 'Nov 2025',
         year: '2025',
-        shortDate: '11/09',
+        pages: 9,
         excerpt: 'A commuter sees the same bus stop at every turn of the road, no matter which route she takes home.',
         icon: 'document'
       }
@@ -1271,12 +1281,12 @@
             <article class="post" data-slug="${slug}" data-file="${file}" role="button" tabindex="0">
               <div class="post__year">${post.year}</div>
               <h2 class="post__title">${post.title}</h2>
-              <div class="post__shortdate">${post.shortDate}</div>
+              <div class="post__pages">${post.pages} pages</div>
               <div class="post__icon">${visual}</div>
               <div class="post__meta">
                 <span class="post__author">${post.author}</span>
                 <span class="post__metaDot">•</span>
-                <span class="post__formattedDate">${post.formattedDate}</span>
+                <span class="post__formattedDate">${post.monthYear}</span>
               </div>
               <p class="post__excerpt">${post.excerpt}</p>
             </article>
@@ -1291,7 +1301,9 @@
               <div class="post__meta">
                 <span>${post.author}</span>
                 <span class="post__metaDot">•</span>
-                <span>${post.formattedDate}</span>
+                <span class="post__monthYear">${post.monthYear}</span>
+                <span class="post__metaDot">•</span>
+                <span>${post.pages} pages</span>
               </div>
             </div>
             <p class="post__excerpt">${post.excerpt}</p>
