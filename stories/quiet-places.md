@@ -1,4 +1,4 @@
-<h1>Quiet Places</h1>
+<h2>Quiet Places</h2>
 
 He had been in the passage for what he estimated was four hours. His watch had stopped at the two-hour mark—battery, probably—and his phone had lost signal long before that.
 
