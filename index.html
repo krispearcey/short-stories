@@ -31,6 +31,7 @@
       --newsletter-input-bg: rgba(0,0,0,0.22);
       --newsletter-flash: rgba(255,255,255,0.09);
       --story-intro-bg: rgba(255,255,255,0.03);
+      --md-body: color-mix(in srgb, var(--text) 92%, var(--muted) 8%);
     }
 
     body.light {
@@ -51,6 +52,7 @@
       --newsletter-input-bg: rgba(255, 255, 252, 0.5);
       --newsletter-flash: rgba(0,0,0,0.08);
       --story-intro-bg: rgba(0,0,0,0.04);
+      --md-body: color-mix(in srgb, var(--text) 82%, var(--muted) 18%);
     }
 
     * { box-sizing: border-box; }
@@ -684,7 +686,7 @@
 
     .story-intro__quote {
       margin: 0;
-      color: var(--muted);
+      color: color-mix(in srgb, var(--text) 78%, var(--muted) 22%);
       font-size: 15px;
       line-height: 1.58;
       letter-spacing: -0.02em;
@@ -694,7 +696,7 @@
 
     .story-intro__quote::before,
     .story-intro__quote::after {
-      color: var(--text);
+      color: var(--muted);
     }
 
     .story-intro__quote::before {
@@ -705,6 +707,11 @@
     .story-intro__quote::after {
       content: "”";
       margin-left: 1px;
+    }
+
+    .md-content {
+      width: 100%;
+      max-width: none;
     }
 
     .md-content h1,
@@ -718,6 +725,7 @@
       font-weight: 700;
       margin-top: 0;
       margin-bottom: 16px;
+      max-width: none;
     }
 
     .md-content h1 {
@@ -741,7 +749,7 @@
 
     .md-content p,
     .md-content li {
-      color: inherit;
+      color: var(--md-body);
       font-size: 15px;
       line-height: 1.72;
       letter-spacing: -0.02em;
@@ -749,14 +757,14 @@
 
     .md-content p {
       margin: 0 0 18px;
-      max-width: 41ch;
+      max-width: none;
     }
 
     .md-content ul,
     .md-content ol {
       margin: 0 0 18px;
       padding-left: 22px;
-      max-width: 41ch;
+      max-width: none;
     }
 
     .md-content li + li {
@@ -768,7 +776,7 @@
       padding-left: 16px;
       border-left: 1px solid color-mix(in srgb, var(--line) 92%, transparent);
       color: color-mix(in srgb, var(--text) 78%, var(--muted) 22%);
-      max-width: 41ch;
+      max-width: none;
     }
 
     .md-content blockquote p {
@@ -780,7 +788,7 @@
       border: 0;
       border-top: 1px solid var(--line);
       margin: 28px 0;
-      max-width: 41ch;
+      max-width: none;
     }
 
     .contact-links {
