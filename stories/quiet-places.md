@@ -1,5 +1,7 @@
 <h1>Quiet Places</h1>
 
+---
+
 He had been in the passage for what he estimated was four hours. His watch had stopped at the two-hour mark—battery, probably—and his phone had lost signal long before that.
 
 - The left wall had disappeared.
