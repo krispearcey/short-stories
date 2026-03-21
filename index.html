@@ -23,6 +23,13 @@
       --ease: cubic-bezier(.2,.8,.2,1);
       --fast: 180ms;
       --medium: 260ms;
+      --nav-pill: rgba(255,255,255,0.045);
+      --subscribe-bg: #f2f2ef;
+      --subscribe-text: #191919;
+      --hover-bright: #f3f3f2;
+      --newsletter-box: rgba(255,255,255,0.03);
+      --newsletter-input-bg: rgba(0,0,0,0.22);
+      --newsletter-flash: rgba(255,255,255,0.09);
     }
 
     body.light {
@@ -35,6 +42,13 @@
       --cta-bg: #191919;
       --cta-text: #f9f9f9;
       --hero-overlay: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.28));
+      --nav-pill: rgba(0,0,0,0.055);
+      --subscribe-bg: #191919;
+      --subscribe-text: #f2f2ef;
+      --hover-bright: #0f1012;
+      --newsletter-box: rgba(0,0,0,0.04);
+      --newsletter-input-bg: rgba(255, 255, 252, 0.5);
+      --newsletter-flash: rgba(0,0,0,0.08);
     }
 
     * { box-sizing: border-box; }
@@ -42,12 +56,14 @@
     html {
       scroll-behavior: smooth;
       -webkit-text-size-adjust: 100%;
+      height: 100%;
     }
 
     html, body { overflow: hidden; }
 
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg);
       color: var(--text);
@@ -153,7 +169,10 @@
       width: min(var(--content-width), calc(100vw - 48px));
       margin: 0 auto;
       padding-top: 0;
-      padding-bottom: 84px;
+      padding-bottom: 24px;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .nav {
@@ -161,12 +180,12 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin: 0;
+      margin: 0 -12px;
       position: sticky;
       top: 0;
       z-index: 20;
       min-height: 60px;
-      padding: 0;
+      padding: 0 12px;
       box-sizing: border-box;
       background: color-mix(in srgb, var(--bg) 38%, transparent);
       isolation: isolate;
@@ -209,12 +228,13 @@
     .nav__links {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 8px;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
 
     .nav__link,
+    .nav__subscribe,
     .mode-toggle {
       color: var(--muted);
       font-size: 14px;
@@ -225,7 +245,21 @@
       border: 0;
       padding: 0;
       cursor: pointer;
-      transition: color var(--fast) var(--ease), opacity var(--fast) var(--ease), text-shadow var(--fast) var(--ease);
+      transition:
+        color var(--fast) var(--ease),
+        opacity var(--fast) var(--ease),
+        text-shadow var(--fast) var(--ease),
+        background var(--fast) var(--ease);
+    }
+
+    .nav__link,
+    .nav__subscribe {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 0 11px;
+      border-radius: 9px;
     }
 
     .nav__link:hover,
@@ -233,6 +267,20 @@
     .nav__link.is-active {
       color: var(--text);
       text-shadow: 0 0 10px rgba(249,249,249,0.06);
+    }
+
+    .nav__link.is-active {
+      background: var(--nav-pill);
+    }
+
+    .nav__subscribe {
+      background: var(--subscribe-bg);
+      color: var(--subscribe-text);
+    }
+
+    .nav__subscribe:hover {
+      opacity: 0.92;
+      text-shadow: none;
     }
 
     body.light .nav__link:hover,
@@ -248,7 +296,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-left: 2px;
+      margin-left: 4px;
       flex: 0 0 auto;
     }
 
@@ -267,7 +315,7 @@
     .hero {
       position: relative;
       height: 246px;
-      margin: 0 0 26px;
+      margin: 0 -12px 30px;
       overflow: hidden;
       border-radius: 2px;
     }
@@ -304,7 +352,7 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      padding-left: 0;
+      padding-left: 6px;
     }
 
     .hero h1 {
@@ -444,17 +492,29 @@
       gap: 0;
     }
 
+    .post {
+      position: relative;
+      transition:
+        background var(--medium) var(--ease),
+        opacity var(--medium) var(--ease),
+        color var(--medium) var(--ease);
+      border-radius: 0;
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+      margin-left: -12px;
+      margin-right: -12px;
+    }
+
     .posts.view-cards .post {
       cursor: pointer;
-      display: grid;
-      grid-template-columns: 42px minmax(0, 1fr);
-      gap: 14px;
-      align-items: start;
-      padding: 14px 0 12px;
+      display: block;
+      padding-top: 17px;
+      padding-bottom: 17px;
     }
 
     .posts.view-cards .post + .post {
-      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      padding-top: 19px;
     }
 
     .posts.view-rows .post {
@@ -463,7 +523,8 @@
       grid-template-columns: 54px minmax(0, 1fr) 72px;
       align-items: center;
       gap: 10px;
-      padding: 12px 0;
+      padding-top: 12px;
+      padding-bottom: 12px;
       border-top: 1px solid var(--line);
     }
 
@@ -471,67 +532,22 @@
       border-top: 0;
     }
 
-    .post__icon,
-    .contact-item__icon {
-      width: 34px;
-      height: 48px;
-      border-radius: 1px;
-      border: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      overflow: hidden;
-      flex: 0 0 auto;
-    }
-
-    .post__icon img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-
-    .post__icon-fallback {
-      width: 100%;
-      height: 100%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .post__icon-fallback svg {
-      width: 18px;
-      height: 18px;
-      display: block;
-    }
-
-    .post__icon svg {
-      width: 18px;
-      height: 18px;
-      display: block;
+    .post:hover {
+      background: color-mix(in srgb, var(--text) 4%, transparent);
     }
 
     .post__title {
       margin: 0;
-      color: var(--text);
+      color: color-mix(in srgb, var(--text) 78%, var(--muted) 22%);
       letter-spacing: -0.035em;
-      transition: opacity var(--fast) var(--ease);
+      transition: color var(--medium) var(--ease), opacity var(--fast) var(--ease);
     }
 
     .posts.view-cards .post__title {
       font-size: 17px;
-      line-height: 1.18;
+      line-height: 1.14;
       font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .posts.view-cards .post > div:nth-child(2) {
-      min-height: 48px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      margin-bottom: 5px;
     }
 
     .posts.view-rows .post__title {
@@ -540,27 +556,19 @@
       font-weight: 700;
     }
 
-    .post:hover .post__title { opacity: 0.92; }
-
-    .post:hover .post__meta,
-    .post:hover .post__excerpt,
-    .post:hover .post__year,
-    .post:hover .post__pages {
-      color: var(--text);
-    }
-
     .post__meta {
       color: var(--muted);
       letter-spacing: -0.02em;
+      transition: color var(--medium) var(--ease);
     }
 
     .posts.view-cards .post__meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 2px;
+      gap: 7px;
+      margin-bottom: 5px;
       font-size: 13px;
-      line-height: 1.35;
+      line-height: 1.28;
       font-weight: 500;
     }
 
@@ -575,9 +583,11 @@
       font-weight: 500;
       color: var(--muted);
       letter-spacing: -0.02em;
+      transition: color var(--medium) var(--ease);
     }
 
     .post__year { justify-self: start; }
+
     .post__pages {
       justify-self: end;
       text-align: right;
@@ -588,15 +598,24 @@
       margin: 0;
       color: var(--muted);
       letter-spacing: -0.02em;
+      transition: color var(--medium) var(--ease);
     }
 
     .posts.view-cards .post__excerpt {
       font-size: 15px;
-      line-height: 1.72;
+      line-height: 1.58;
       max-width: none;
       margin: 0;
-      grid-column: 1 / -1;
       padding: 0;
+    }
+
+    .post:hover .post__title,
+    .post:hover .post__meta,
+    .post:hover .post__excerpt,
+    .post:hover .post__year,
+    .post:hover .post__pages {
+      color: var(--hover-bright);
+      opacity: 1;
     }
 
     .posts.view-rows .post__excerpt,
@@ -630,7 +649,7 @@
     .plain-block strong {
       display: block;
       margin-top: 10px;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
       font-size: 17px;
       line-height: 1.18;
       font-weight: 700;
@@ -638,132 +657,245 @@
       letter-spacing: -0.035em;
     }
 
-    .md-content {
-      color: var(--text);
+    .contact-links {
+      display: grid;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
       font-size: 15px;
-      line-height: 1.78;
+      line-height: 1.45;
       letter-spacing: -0.02em;
+      transition: color var(--fast) var(--ease), opacity var(--fast) var(--ease);
     }
 
-    .md-content > :first-child {
-      margin-top: 10px;
+    .contact-link i {
+      width: 16px;
+      text-align: center;
+      flex: 0 0 16px;
     }
 
-    .md-content h1,
-    .md-content h2,
-    .md-content h3 {
-      color: #f3f3f1;
-      letter-spacing: -0.04em;
-      line-height: 1.08;
-      margin: 0 0 16px;
-      font-weight: 700;
+    .contact-link:hover {
+      color: var(--text);
     }
 
-    body.light .md-content h1,
-    body.light .md-content h2,
-    body.light .md-content h3 {
-      color: #111214;
+    .newsletter {
+      margin-top: 34px;
+      padding: 0;
     }
 
-    .md-content h1 { font-size: 30px; }
-    .md-content h2 { font-size: 24px; margin-top: 32px; }
-    .md-content h3 { font-size: 20px; margin-top: 26px; }
-
-    .md-content p,
-    .md-content ul,
-    .md-content ol,
-    .md-content blockquote {
-      margin: 0 0 18px;
-      color: #88888d;
-    }
-
-    body.light .md-content p,
-    body.light .md-content ul,
-    body.light .md-content ol,
-    body.light .md-content blockquote {
-      color: #6f6f74;
-    }
-
-    .md-content a {
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    .md-content blockquote {
-      margin-left: 0;
-      padding-left: 14px;
-      border-left: 1px solid var(--line);
-    }
-
-    .md-content img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 20px 0;
-    }
-
-    .contact-list {
-      display: grid;
-      gap: 0;
-    }
-
-    .contact-item {
-      cursor: pointer;
-      display: grid;
-      grid-template-columns: 42px minmax(0, 1fr);
-      gap: 14px;
-      align-items: start;
-      padding: 14px 0 12px;
-    }
-
-    .contact-item + .contact-item {
-      padding-top: 20px;
-    }
-
-    .contact-item__main {
-      min-height: 48px;
+    .newsletter__inner {
+      padding: 22px 20px;
+      margin-left: -12px;
+      margin-right: -12px;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--newsletter-box) 82%, transparent);
+      min-height: 148px;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      transition:
+        background var(--medium) var(--ease),
+        box-shadow var(--medium) var(--ease),
+        transform var(--medium) var(--ease);
     }
 
-    .contact-item__title {
-      margin: 0 0 4px;
+    .newsletter__inner.is-flashing {
+      animation: newsletterFlash 900ms var(--ease);
+    }
+
+    @keyframes newsletterFlash {
+      0% {
+        background: color-mix(in srgb, var(--newsletter-box) 82%, transparent);
+        box-shadow: 0 0 0 rgba(0,0,0,0);
+      }
+      28% {
+        background: color-mix(in srgb, var(--newsletter-box) 55%, var(--newsletter-flash) 45%);
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--newsletter-flash) 48%, transparent);
+      }
+      100% {
+        background: color-mix(in srgb, var(--newsletter-box) 82%, transparent);
+        box-shadow: 0 0 0 rgba(0,0,0,0);
+      }
+    }
+
+    .newsletter__header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .newsletter__title {
+      margin: 0;
+      color: color-mix(in srgb, var(--text) 78%, var(--muted) 22%);
       font-size: 17px;
-      line-height: 1.18;
+      line-height: 1.14;
       font-weight: 700;
       letter-spacing: -0.035em;
-      color: var(--text);
-      transition: opacity var(--fast) var(--ease);
     }
 
-    .contact-item__title a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .contact-item__meta {
-      color: var(--muted);
+    .newsletter__count {
       font-size: 13px;
-      line-height: 1.35;
+      line-height: 1;
       font-weight: 500;
       letter-spacing: -0.02em;
-    }
-
-    .contact-item__excerpt {
-      margin: 0;
-      font-size: 15px;
-      line-height: 1.72;
       color: var(--muted);
-      letter-spacing: -0.02em;
-      grid-column: 1 / -1;
+      white-space: nowrap;
     }
 
-    .contact-item:hover .contact-item__title { opacity: 0.92; }
+    .newsletter__form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
 
-    .contact-item:hover .contact-item__meta,
-    .contact-item:hover .contact-item__excerpt {
-      color: var(--text);
+    .newsletter__input {
+      width: 100%;
+      min-width: 0;
+      height: 32px;
+      padding: 0 11px;
+      border: 0;
+      outline: none;
+      border-radius: 9px;
+      background: var(--newsletter-input-bg);
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      transition:
+        background var(--medium) var(--ease),
+        color var(--medium) var(--ease),
+        opacity var(--medium) var(--ease);
+    }
+
+    .newsletter__input::placeholder {
+      color: var(--muted);
+      opacity: 1;
+    }
+
+    .newsletter__input:disabled {
+      cursor: default;
+      opacity: 0.7;
+      background: color-mix(in srgb, var(--newsletter-input-bg) 82%, var(--newsletter-box) 18%);
+      color: color-mix(in srgb, var(--muted) 85%, var(--text) 15%);
+    }
+
+    .newsletter__button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      height: 28px;
+      width: 104px;
+      min-width: 104px;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 9px;
+      background: var(--subscribe-bg);
+      color: var(--subscribe-text);
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      cursor: pointer;
+      transition:
+        opacity var(--fast) var(--ease),
+        background var(--medium) var(--ease),
+        color var(--medium) var(--ease);
+      white-space: nowrap;
+      overflow: hidden;
+      flex: 0 0 104px;
+    }
+
+    .newsletter__button:hover {
+      opacity: 0.92;
+    }
+
+    .newsletter__button.is-success {
+      background: var(--newsletter-box);
+      color: var(--subscribe-bg);
+      cursor: default;
+      opacity: 1;
+    }
+
+    .newsletter__button:disabled {
+      cursor: default;
+      opacity: 1;
+    }
+
+    .newsletter__buttonLabel,
+    .newsletter__buttonSpinner {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transition:
+        opacity var(--fast) var(--ease),
+        transform var(--fast) var(--ease);
+    }
+
+    .newsletter__buttonSpinner {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 1.7px solid color-mix(in srgb, currentColor 28%, transparent);
+      border-top-color: currentColor;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .newsletter__button.is-loading .newsletter__buttonLabel {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    .newsletter__button.is-loading .newsletter__buttonSpinner {
+      opacity: 1;
+      animation: newsletterSpin 650ms linear infinite;
+    }
+
+    @keyframes newsletterSpin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .newsletter__copy {
+      margin: 0;
+      max-width: 42ch;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.58;
+      letter-spacing: -0.02em;
+    }
+
+    .footer {
+      margin-top: auto;
+      padding-top: 34px;
+      padding-bottom: 0;
+    }
+
+    .footer__inner {
+      margin-left: -12px;
+      margin-right: -12px;
+      padding: 17px 12px 0;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: flex-end;
+      color: color-mix(in srgb, var(--muted) 50%, transparent);
+      font-size: 13px;
+      line-height: 1.58;
+      letter-spacing: -0.02em;
     }
 
     @media (max-width: 720px) {
@@ -783,15 +915,22 @@
       }
 
       .nav__links {
-        gap: 16px;
+        gap: 8px;
         flex-wrap: nowrap;
         justify-content: flex-end;
         min-width: 0;
       }
 
       .nav__link,
+      .nav__subscribe,
       .mode-toggle {
         font-size: 15px;
+      }
+
+      .nav__link,
+      .nav__subscribe {
+        min-height: 30px;
+        padding: 0 11px;
       }
 
       .mode-toggle {
@@ -807,7 +946,7 @@
 
       .hero {
         height: 196px;
-        margin-bottom: 22px;
+        margin-bottom: 26px;
       }
 
       .hero h1 {
@@ -862,11 +1001,19 @@
       .brand {
         max-width: 34vw;
       }
+
+      .newsletter__inner {
+        padding: 20px 18px;
+        min-height: 142px;
+      }
     }
 
     @media (max-width: 520px) {
       .topbar__cta { font-size: 11px; }
-      .shell { width: calc(100vw - 22px); }
+
+      .shell {
+        width: calc(100vw - 22px);
+      }
 
       .nav {
         gap: 10px;
@@ -879,12 +1026,19 @@
       }
 
       .nav__links {
-        gap: 14px;
+        gap: 7px;
       }
 
       .nav__link,
+      .nav__subscribe,
       .mode-toggle {
         font-size: 15px;
+      }
+
+      .nav__link,
+      .nav__subscribe {
+        min-height: 30px;
+        padding: 0 10px;
       }
 
       .mode-toggle {
@@ -915,31 +1069,12 @@
       }
 
       .posts.view-cards .post {
-        grid-template-columns: 42px minmax(0, 1fr);
-        gap: 12px;
-        padding: 14px 0 20px;
+        padding-top: 15px;
+        padding-bottom: 16px;
       }
 
-      .post__icon,
-      .contact-item__icon {
-        width: 34px;
-        height: 48px;
-      }
-
-      .post__icon svg {
-        width: 16px;
-        height: 16px;
-      }
-
-      .posts.view-cards .post__title,
-      .posts.view-rows .post__title,
-      .contact-item__title {
-        font-size: 15px;
-      }
-
-      .posts.view-cards .post__excerpt,
-      .contact-item__excerpt {
-        font-size: 14px;
+      .posts.view-cards .post + .post {
+        padding-top: 16px;
       }
 
       .posts.view-rows .post {
@@ -947,8 +1082,49 @@
         gap: 8px;
       }
 
+      .posts.view-cards .post__title,
+      .posts.view-rows .post__title {
+        font-size: 15px;
+      }
+
+      .posts.view-cards .post__excerpt {
+        font-size: 14px;
+        line-height: 1.56;
+      }
+
       .post__pages {
         font-size: 12px;
+      }
+
+      .newsletter__inner {
+        padding: 18px 16px;
+        min-height: 136px;
+      }
+
+      .newsletter__header {
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .newsletter__form {
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+      }
+
+      .newsletter__input {
+        font-size: 15px;
+      }
+
+      .newsletter__button {
+        width: 104px;
+        min-width: 104px;
+        flex-basis: 104px;
+      }
+
+      .newsletter__copy {
+        font-size: 14px;
+        line-height: 1.56;
+        max-width: none;
       }
     }
 
@@ -956,22 +1132,39 @@
       .topbar__cta,
       .brand,
       .nav__link,
+      .nav__subscribe,
       .mode-toggle,
       .view-toggle button,
       .post,
       .post__title,
-      .contact-item,
-      .contact-item__title,
-      .contact-item__meta,
-      .contact-item__excerpt,
       .post__meta,
       .post__excerpt,
       .post__year,
-      .post__pages {
+      .post__pages,
+      .contact-link,
+      .newsletter__button {
         -webkit-tap-highlight-color: transparent;
         tap-highlight-color: transparent;
         text-shadow: none !important;
         user-select: none;
+      }
+
+      .post:hover {
+        background: transparent;
+      }
+
+      .post:hover .post__title,
+      .post:hover .post__meta,
+      .post:hover .post__excerpt,
+      .post:hover .post__year,
+      .post:hover .post__pages,
+      .post:active .post__title,
+      .post:active .post__meta,
+      .post:active .post__excerpt,
+      .post:active .post__year,
+      .post:active .post__pages {
+        color: inherit !important;
+        opacity: inherit !important;
       }
 
       .topbar__cta:hover,
@@ -980,34 +1173,24 @@
       .brand:active,
       .nav__link:hover,
       .nav__link:active,
+      .nav__subscribe:hover,
+      .nav__subscribe:active,
       .mode-toggle:hover,
       .mode-toggle:active,
       .view-toggle button:hover,
       .view-toggle button:active,
-      .post:hover .post__title,
-      .post:active .post__title,
-      .post:hover .post__meta,
-      .post:active .post__meta,
-      .post:hover .post__excerpt,
-      .post:active .post__excerpt,
-      .post:hover .post__year,
-      .post:active .post__year,
-      .post:hover .post__pages,
-      .post:active .post__pages,
-      .contact-item:hover .contact-item__title,
-      .contact-item:active .contact-item__title,
-      .contact-item:hover .contact-item__meta,
-      .contact-item:active .contact-item__meta,
-      .contact-item:hover .contact-item__excerpt,
-      .contact-item:active .contact-item__excerpt {
+      .contact-link:hover,
+      .contact-link:active,
+      .newsletter__button:hover,
+      .newsletter__button:active {
         color: inherit !important;
         opacity: inherit !important;
         text-shadow: none !important;
-        background: transparent !important;
       }
 
       .search input,
-      .search input[type="search"] {
+      .search input[type="search"],
+      .newsletter__input {
         font-size: 16px;
       }
 
@@ -1038,7 +1221,7 @@
         <nav class="nav__links" aria-label="Primary navigation">
           <a class="nav__link is-active" href="#home">Home</a>
           <a class="nav__link" href="#about" data-section="about">About</a>
-          <a class="nav__link" href="#contact" data-section="contact">Contact</a>
+          <a class="nav__subscribe" href="#newsletter">Subscribe</a>
           <button class="mode-toggle" id="modeToggle" type="button" aria-label="Toggle light and dark mode">
             <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"></path>
@@ -1096,6 +1279,38 @@
         <div id="posts" class="posts view-cards"></div>
         <div id="emptyState" class="empty">No titles matched your search.</div>
       </section>
+
+      <section id="newsletter" class="newsletter" aria-labelledby="newsletterTitle">
+        <div class="newsletter__inner" id="newsletterInner">
+          <div class="newsletter__header">
+            <h2 class="newsletter__title" id="newsletterTitle">Looking for more?</h2>
+            <div class="newsletter__count">10+ Readers</div>
+          </div>
+
+          <form class="newsletter__form" id="newsletterForm" novalidate>
+            <input
+              class="newsletter__input"
+              id="newsletterInput"
+              type="email"
+              name="email"
+              placeholder="your@email.com"
+              aria-label="Email address"
+              autocomplete="email"
+              required
+            />
+            <button class="newsletter__button" id="newsletterButton" type="submit">
+              <span class="newsletter__buttonLabel" id="newsletterButtonLabel">Subscribe</span>
+              <span class="newsletter__buttonSpinner" aria-hidden="true"></span>
+            </button>
+          </form>
+
+          <p class="newsletter__copy" id="newsletterCopy">Notifications only when new stories are posted.<br>No spam. No nonsense.</p>
+        </div>
+      </section>
+
+      <footer class="footer" aria-label="Footer">
+        <div class="footer__inner">© Kristopher Pearcey 2026</div>
+      </footer>
     </main>
   </div>
 
@@ -1109,8 +1324,7 @@
         monthYear: 'Mar 2026',
         year: '2026',
         pages: 31,
-        excerpt: 'A novel-length descent into familiar places that become strange the longer anyone looks at them.',
-        icon: 'document'
+        excerpt: 'A novel-length descent into familiar places that become strange the longer anyone looks at them.'
       },
       {
         title: 'The Long Hall',
@@ -1119,8 +1333,7 @@
         monthYear: 'Feb 2026',
         year: '2026',
         pages: 18,
-        excerpt: 'A corridor keeps extending in the corner of a family home, always just past where anyone remembers it ending.',
-        icon: 'lines'
+        excerpt: 'A corridor keeps extending in the corner of a family home, always just past where anyone remembers it ending.'
       },
       {
         title: 'Salt House',
@@ -1129,8 +1342,7 @@
         monthYear: 'Jan 2026',
         year: '2026',
         pages: 14,
-        excerpt: 'Wind, timber, and the sea begin answering each other after a winter power outage on the coast.',
-        icon: 'grid'
+        excerpt: 'Wind, timber, and the sea begin answering each other after a winter power outage on the coast.'
       },
       {
         title: 'The Visitor Log',
@@ -1139,8 +1351,7 @@
         monthYear: 'Dec 2025',
         year: '2025',
         pages: 11,
-        excerpt: 'The names in a museum sign-in book start appearing before the visitors themselves do.',
-        icon: 'stack'
+        excerpt: 'The names in a museum sign-in book start appearing before the visitors themselves do.'
       },
       {
         title: 'Blue Hour',
@@ -1149,8 +1360,7 @@
         monthYear: 'Nov 2025',
         year: '2025',
         pages: 9,
-        excerpt: 'A commuter sees the same bus stop at every turn of the road, no matter which route she takes home.',
-        icon: 'document'
+        excerpt: 'A commuter sees the same bus stop at every turn of the road, no matter which route she takes home.'
       }
     ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -1168,55 +1378,20 @@
     const homeAnchor = document.getElementById('home');
     const pageEl = document.querySelector('.page');
     const homeLink = document.querySelector('.nav__link[href="#home"]');
+    const newsletterLinks = document.querySelectorAll('a[href="#newsletter"]');
+    const newsletterEl = document.getElementById('newsletter');
+    const newsletterInnerEl = document.getElementById('newsletterInner');
+    const newsletterForm = document.getElementById('newsletterForm');
+    const newsletterInput = document.getElementById('newsletterInput');
+    const newsletterButton = document.getElementById('newsletterButton');
+    const newsletterButtonLabel = document.getElementById('newsletterButtonLabel');
 
     let currentStoryTitle = '';
     let brandScrollHandler = null;
-
-    function getIconMarkup(type) {
-      const icons = {
-        document: `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M7 3.75h7l4 4v12.5a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.75a1 1 0 0 1 1-1Z"></path>
-            <path d="M14 3.75v4h4"></path>
-            <path d="M9 12h6M9 16h6"></path>
-          </svg>`,
-        lines: `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-            <path d="M6 7h12"></path>
-            <path d="M6 12h8"></path>
-            <path d="M6 17h10"></path>
-          </svg>`,
-        grid: `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-            <rect x="4.5" y="4.5" width="5.5" height="5.5" rx="1"></rect>
-            <rect x="14" y="4.5" width="5.5" height="5.5" rx="1"></rect>
-            <rect x="4.5" y="14" width="5.5" height="5.5" rx="1"></rect>
-            <rect x="14" y="14" width="5.5" height="5.5" rx="1"></rect>
-          </svg>`,
-        stack: `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 4.5 4.5 8.5 12 12.5l7.5-4-7.5-4Z"></path>
-            <path d="M4.5 12.5 12 16.5l7.5-4"></path>
-            <path d="M4.5 16.5 12 20.5l7.5-4"></path>
-          </svg>`
-      };
-      return icons[type] || icons.document;
-    }
+    let newsletterSubmitted = false;
 
     function slugify(title) {
       return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    }
-
-    function getStoryVisual(post, slug) {
-      const fallback = getIconMarkup(post.icon);
-      return `
-        <img
-          src="img/${slug}.jpg"
-          alt="${post.title} cover"
-          onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline-flex';"
-        />
-        <span class="post__icon-fallback">${fallback}</span>
-      `;
     }
 
     function setBrandText(text = 'KP') {
@@ -1274,7 +1449,6 @@
       postsEl.innerHTML = items.map((post) => {
         const slug = slugify(post.title);
         const file = `stories/${slug}.md`;
-        const visual = getStoryVisual(post, slug);
 
         if (isRows) {
           return `
@@ -1282,7 +1456,6 @@
               <div class="post__year">${post.year}</div>
               <h2 class="post__title">${post.title}</h2>
               <div class="post__pages">${post.pages} pages</div>
-              <div class="post__icon">${visual}</div>
               <div class="post__meta">
                 <span class="post__author">${post.author}</span>
                 <span class="post__metaDot">•</span>
@@ -1295,16 +1468,13 @@
 
         return `
           <article class="post" data-slug="${slug}" data-file="${file}" role="button" tabindex="0">
-            <div class="post__icon">${visual}</div>
-            <div>
-              <h2 class="post__title">${post.title}</h2>
-              <div class="post__meta">
-                <span>${post.author}</span>
-                <span class="post__metaDot">•</span>
-                <span class="post__monthYear">${post.monthYear}</span>
-                <span class="post__metaDot">•</span>
-                <span>${post.pages} pages</span>
-              </div>
+            <h2 class="post__title">${post.title}</h2>
+            <div class="post__meta">
+              <span>${post.author}</span>
+              <span class="post__metaDot">•</span>
+              <span class="post__monthYear">${post.monthYear}</span>
+              <span class="post__metaDot">•</span>
+              <span>${post.pages} pages</span>
             </div>
             <p class="post__excerpt">${post.excerpt}</p>
           </article>
@@ -1328,45 +1498,27 @@
       about: {
         title: 'About',
         showTitle: true,
-        body: `<p>Kristopher Pearcey writes atmospheric horror from Atlantic Canada, drawn to liminal spaces, coastal unease, and the kinds of places that feel wrong before they look wrong.</p>`
-      },
-      contact: {
-        title: 'Contact',
-        showTitle: false,
         body: `
-          <div class="contact-list">
-            <article class="contact-item">
-              <div class="contact-item__icon"><i class="fa-regular fa-envelope"></i></div>
-              <div class="contact-item__main">
-                <h3 class="contact-item__title"><a href="mailto:hello@example.com">Contact</a></h3>
-                <div class="contact-item__meta">hello@example.com</div>
-              </div>
-              <p class="contact-item__excerpt">For inquiries, correspondence, and the usual human forms of contact.</p>
-            </article>
-            <article class="contact-item">
-              <div class="contact-item__icon"><i class="fa-regular fa-paper-plane"></i></div>
-              <div class="contact-item__main">
-                <h3 class="contact-item__title"><a href="#newsletter">Newsletter</a></h3>
-                <div class="contact-item__meta">Join the mailing list</div>
-              </div>
-              <p class="contact-item__excerpt">For new releases, updates, and anything that escapes the dark long enough to be announced.</p>
-            </article>
-            <article class="contact-item">
-              <div class="contact-item__icon"><i class="fa-brands fa-goodreads-g"></i></div>
-              <div class="contact-item__main">
-                <h3 class="contact-item__title"><a href="https://www.goodreads.com/" target="_blank" rel="noopener noreferrer">Goodreads</a></h3>
-                <div class="contact-item__meta">Books and shelves</div>
-              </div>
-              <p class="contact-item__excerpt">Proof that the dread is at least well read.</p>
-            </article>
-            <article class="contact-item">
-              <div class="contact-item__icon"><i class="fa-regular fa-chess-knight"></i></div>
-              <div class="contact-item__main">
-                <h3 class="contact-item__title"><a href="https://www.chess.com/" target="_blank" rel="noopener noreferrer">Chess.com</a></h3>
-                <div class="contact-item__meta">Play and puzzles</div>
-              </div>
-              <p class="contact-item__excerpt">Find out whether the writer of dread is any good at the game of it.</p>
-            </article>
+          <p>Kristopher Pearcey is a horror writer from Atlantic Canada.
+		  He's made no shortage of attempts at full length novels, but his ideas tend to grow faster than he can write them down. 
+		  For now, he's put his energy into short stories, all of which you'll find here.</p>
+		  <p>Kris has a habit of letting his hobbies and overactive imagination bleed together in his work. 
+		  Most of what ends up on the page starts somewhere he frequents, and gets worse from there.</p>
+		  <p>When he's not writing, he's probably outdoors fly fishing water he won't tell you about, or playing chess online. 
+		  If you'd like to connect with Kris, you'll find him at the links below.</p>
+          <div class="contact-links">
+            <a class="contact-link" href="mailto:hello@example.com">
+              <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+              <span>hello@example.com</span>
+            </a>
+            <a class="contact-link" href="https://www.goodreads.com/" target="_blank" rel="noopener noreferrer">
+              <i class="fa-brands fa-goodreads-g" aria-hidden="true"></i>
+              <span>Goodreads</span>
+            </a>
+            <a class="contact-link" href="https://www.chess.com/" target="_blank" rel="noopener noreferrer">
+              <i class="fa-regular fa-chess-knight" aria-hidden="true"></i>
+              <span>Chess.com</span>
+            </a>
           </div>
         `
       }
@@ -1396,7 +1548,7 @@
       }
     }
 
-    function showHomeView() {
+    function showHomeView(scrollToTop = true) {
       clearBrandScrollWatcher();
       currentStoryTitle = '';
       setBrandText('KP');
@@ -1404,8 +1556,12 @@
       dynamicSection.innerHTML = '';
       controlsSection.style.display = '';
       storiesSection.style.display = '';
+      newsletterEl.style.display = '';
       setActiveNav('home');
-      pageEl.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (scrollToTop) {
+        pageEl.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
 
     function pushAppState(state, hash = '') {
@@ -1438,6 +1594,7 @@
         dynamicSection.innerHTML = `<div class="md-content">${marked.parse(text)}</div>`;
         controlsSection.style.display = 'none';
         storiesSection.style.display = 'none';
+        newsletterEl.style.display = 'none';
         setActiveNav('story');
         setBrandText('KP');
         pageEl.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1457,6 +1614,7 @@
         dynamicSection.innerHTML = `<p>Unable to load story.</p>`;
         controlsSection.style.display = 'none';
         storiesSection.style.display = 'none';
+        newsletterEl.style.display = 'none';
         setActiveNav('story');
       }
     }
@@ -1473,6 +1631,7 @@
       dynamicSection.innerHTML = section.showTitle === false ? section.body : `<strong>${section.title}</strong>${section.body}`;
       controlsSection.style.display = 'none';
       storiesSection.style.display = 'none';
+      newsletterEl.style.display = 'none';
       setActiveNav(name);
       pageEl.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -1486,6 +1645,66 @@
       if (pushState) {
         pushAppState({ view: 'home' }, '#home');
       }
+    }
+
+    function flashNewsletterBox() {
+      if (!newsletterInnerEl) return;
+      newsletterInnerEl.classList.remove('is-flashing');
+      void newsletterInnerEl.offsetWidth;
+      newsletterInnerEl.classList.add('is-flashing');
+    }
+
+    function scrollToNewsletter(withFlash = false) {
+      if (!newsletterEl) return;
+
+      newsletterEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      if (withFlash) {
+        window.setTimeout(() => {
+          flashNewsletterBox();
+        }, 420);
+      }
+    }
+
+    function handleNewsletterNavigation() {
+      if (dynamicSection.style.display === 'block' || controlsSection.style.display === 'none' || storiesSection.style.display === 'none' || newsletterEl.style.display === 'none') {
+        showHomeView(false);
+        replaceAppState({ view: 'home' }, '#newsletter');
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            scrollToNewsletter(true);
+          });
+        });
+        return;
+      }
+
+      replaceAppState({ view: 'home' }, '#newsletter');
+      scrollToNewsletter(true);
+    }
+
+    async function handleNewsletterSubmit(event) {
+      event.preventDefault();
+
+      if (newsletterSubmitted || !newsletterInput || !newsletterButton || !newsletterButtonLabel) return;
+
+      const email = newsletterInput.value.trim();
+      if (!email || !newsletterInput.checkValidity()) {
+        newsletterInput.reportValidity();
+        return;
+      }
+
+      newsletterButton.classList.add('is-loading');
+      newsletterButton.disabled = true;
+
+      await new Promise(resolve => window.setTimeout(resolve, 700));
+
+      newsletterSubmitted = true;
+      newsletterInput.value = email;
+      newsletterInput.disabled = true;
+      newsletterButton.classList.remove('is-loading');
+      newsletterButton.classList.add('is-success');
+      newsletterButtonLabel.textContent = 'Thank you!';
+      newsletterButton.setAttribute('aria-label', 'Thank you!');
     }
 
     function setView(mode) {
@@ -1529,6 +1748,15 @@
         openSection(link.dataset.section, true);
       });
     });
+
+    newsletterLinks.forEach(link => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        handleNewsletterNavigation();
+      });
+    });
+
+    newsletterForm.addEventListener('submit', handleNewsletterSubmit);
 
     homeLink.addEventListener('click', (event) => {
       event.preventDefault();
