@@ -1,7 +1,3 @@
-He inched forward on worn fingertips, cautious not to exhale fully—he sensed the walls would press tighter if he did.
-
-The dark had thickened to something that his headlamp could not penetrate. Not blocked. Not reflected. Absorbed.
-
 <h1>Quiet Places</h1>
 
 He had been in the passage for what he estimated was four hours. His watch had stopped at the two-hour mark—battery, probably—and his phone had lost signal long before that.
@@ -21,6 +17,8 @@ Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Viv
 Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet.
 
 Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.
+
+---
 
 Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
 
