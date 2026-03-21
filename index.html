@@ -187,7 +187,7 @@
       min-height: 60px;
       padding: 0 12px;
       box-sizing: border-box;
-      background: color-mix(in srgb, var(--bg) 38%, transparent);
+      background: color-mix(in srgb, var(--bg) 9%, transparent);
       isolation: isolate;
     }
 
@@ -656,6 +656,17 @@
       color: var(--text);
       letter-spacing: -0.035em;
     }
+
+	.md-content h1,
+	.md-content h2,
+	.md-content h3,
+	.md-content h4,
+	.md-content h5,
+	.md-content h6 {
+	  color: color-mix(in srgb, var(--text) 78%, var(--muted) 22%);
+	  letter-spacing: -0.035em;
+	  font-weight: 700;
+	}
 
     .contact-links {
       display: grid;
