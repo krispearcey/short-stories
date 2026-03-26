@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kristopher Pearcey</title>
-  <meta name="description" content="Short horror from Atlantic Canada by Kristopher Pearcey." />
+  <meta name="description" content="Short horror rooted in Atlantic Canada by Kristopher Pearcey." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
@@ -12,29 +12,53 @@
 </head>
 <body>
   <div class="site-shell">
-    <header class="topbar">
-      <a class="brand" href="#home" aria-label="Kristopher Pearcey home">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span class="brand-text">Kristopher Pearcey</span>
-      </a>
+    <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
 
-      <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="header-top">
+          <a href="#home" class="site-name" data-nav="home" aria-label="Kristopher Pearcey home">Kristopher Pearcey</a>
+          <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="siteDrawer" aria-label="Open menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+        <div class="double-line" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </div>
+      </div>
     </header>
 
-    <div class="menu-overlay" id="menuOverlay" hidden></div>
+    <aside class="drawer" id="siteDrawer" aria-hidden="true">
+      <div class="drawer-inner">
+        <section class="menu-section menu-nav-section">
+          <div class="menu-top-row">
+            <div class="menu-links">
+              <a href="#home" data-nav="home">Home</a>
+              <a href="#about" data-nav="about">About</a>
+              <a href="#contact" data-nav="contact">Contact</a>
+            </div>
 
-    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
-      <div class="mobile-menu-inner">
-        <div class="menu-heading">Kristopher Pearcey</div>
-        <a href="#home" data-nav>Home</a>
-        <a href="#about" data-nav>About</a>
-        <a href="#contact" data-nav>Contact</a>
+            <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark mode">
+              <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="menu-section">
+          <h2 class="menu-label">Looking for more?</h2>
+          <p class="menu-copy">Subscribe to get alerts when new stories are posted.</p>
+          <form class="subscribe-wrap" id="menuSubscribeForm">
+            <div class="input-shell">
+              <label class="visually-hidden" for="menuEmailInput">Email address</label>
+              <input id="menuEmailInput" class="subscribe-input" type="email" placeholder="Type your email…" required />
+              <button class="clear-input-btn" id="clearEmailInput" type="button" aria-label="Clear email">×</button>
+            </div>
+            <button class="inset-btn" id="menuSubscribeButton" type="submit" aria-label="Subscribe">Subscribe</button>
+          </form>
+        </section>
       </div>
-    </nav>
+    </aside>
 
     <main id="app" class="app"></main>
 

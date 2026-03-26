@@ -50,46 +50,90 @@ const state = {
 };
 
 const app = document.getElementById('app');
-const menuButton = document.getElementById('menuButton');
-const mobileMenu = document.getElementById('mobileMenu');
-const menuOverlay = document.getElementById('menuOverlay');
+const drawerBackdrop = document.getElementById('drawerBackdrop');
+const menuToggle = document.getElementById('menuToggle');
+const siteDrawer = document.getElementById('siteDrawer');
+const menuSubscribeForm = document.getElementById('menuSubscribeForm');
+const menuSubscribeButton = document.getElementById('menuSubscribeButton');
+const menuEmailInput = document.getElementById('menuEmailInput');
+const clearEmailInputButton = document.getElementById('clearEmailInput');
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
 
-menuButton.addEventListener('click', () => {
-  setMenuState(!mobileMenu.classList.contains('open'));
-});
-
-menuOverlay.addEventListener('click', () => setMenuState(false));
+menuToggle.addEventListener('click', () => setMenuState());
+drawerBackdrop.addEventListener('click', () => setMenuState(false));
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') setMenuState(false);
 });
 
-mobileMenu.querySelectorAll('[data-nav]').forEach((link) => {
-  link.addEventListener('click', () => setMenuState(false));
+document.querySelectorAll('[data-nav]').forEach((link) => {
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+    navigate(link.dataset.nav);
+    setMenuState(false);
+  });
 });
 
-window.addEventListener('hashchange', () => {
-  setMenuState(false);
+menuSubscribeButton.innerHTML = renderButtonContent();
+
+menuSubscribeForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  handleNewsletterSubmit(menuEmailInput, menuSubscribeButton);
+});
+menuEmailInput.addEventListener('input', (event) => {
+  if (state.newsletterSubmitted) return;
+  state.newsletterEmail = event.target.value;
+  syncNewsletterUI();
+});
+clearEmailInputButton.addEventListener('click', () => {
+  if (menuEmailInput.readOnly || menuEmailInput.disabled) return;
+  state.newsletterEmail = '';
+  syncNewsletterUI();
+  menuEmailInput.focus();
+});
+
+themeToggle.addEventListener('click', () => {
+  setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+});
+
+window.addEventListener('hashchange', renderRoute);
+window.addEventListener('resize', syncHeaderHeight);
+window.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  syncHeaderHeight();
+  syncNewsletterUI();
   renderRoute();
 });
 
-window.addEventListener('DOMContentLoaded', renderRoute);
-window.addEventListener('resize', () => {
-  if (window.innerWidth >= 760) {
-    document.body.style.overflow = '';
-    menuOverlay.hidden = true;
-  }
-});
+function setTheme(mode) {
+  const dark = mode === 'dark';
+  document.body.classList.toggle('dark', dark);
+  localStorage.setItem('kp-theme', mode);
+  themeIcon.textContent = dark ? 'light_mode' : 'dark_mode';
+}
 
-function setMenuState(isOpen) {
-  mobileMenu.classList.toggle('open', isOpen);
-  menuButton.classList.toggle('is-open', isOpen);
-  menuButton.setAttribute('aria-expanded', String(isOpen));
-  mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+function initTheme() {
+  const saved = localStorage.getItem('kp-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setTheme(saved || (prefersDark ? 'dark' : 'light'));
+}
 
-  const showOverlay = isOpen && window.innerWidth >= 760;
-  menuOverlay.hidden = !showOverlay;
-  document.body.style.overflow = isOpen && window.innerWidth < 760 ? 'hidden' : '';
+function syncHeaderHeight() {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+  const height = Math.round(header.getBoundingClientRect().height);
+  document.documentElement.style.setProperty('--header-height', `${height}px`);
+}
+
+function setMenuState(force) {
+  const open = typeof force === 'boolean' ? force : !document.body.classList.contains('menu-open');
+  document.body.classList.toggle('menu-open', open);
+  menuToggle.setAttribute('aria-expanded', String(open));
+  siteDrawer.setAttribute('aria-hidden', String(!open));
+  drawerBackdrop.hidden = !open;
+  document.body.style.overflow = open ? 'hidden' : '';
+  if (open) syncHeaderHeight();
 }
 
 function renderRoute() {
@@ -102,10 +146,45 @@ function renderRoute() {
   return renderHomePage();
 }
 
+function navigate(route) {
+  window.location.hash = `#${route}`;
+}
+
+function applyFilter(query, closeMenu = false) {
+  state.query = query.trim();
+  syncSearchUI();
+
+  const currentRoute = (window.location.hash.replace(/^#/, '') || 'home').split('/')[0];
+  if (currentRoute !== 'home') {
+    window.location.hash = '#home';
+  } else {
+    updateStories();
+  }
+
+  if (closeMenu) setMenuState(false);
+}
+
+function syncSearchUI() {
+  const pageSearch = document.getElementById('storySearch');
+  const clearSearchButton = document.getElementById('clearSearchInput');
+
+  if (pageSearch && pageSearch !== document.activeElement) {
+    pageSearch.value = state.query;
+  }
+
+  if (pageSearch) {
+    pageSearch.classList.toggle('has-clear', state.query.length > 0);
+  }
+
+  if (clearSearchButton) {
+    clearSearchButton.classList.toggle('show', state.query.length > 0);
+  }
+}
+
 function getFilteredStories() {
   return stories.filter((story) => {
-    const haystack = `${story.title} ${story.description} ${story.author} ${story.published} ${story.year} ${story.pages}`.toLowerCase();
-    return haystack.includes(state.query.toLowerCase().trim());
+    const haystack = `${story.title} ${story.description} ${story.author} ${story.published} ${story.year} ${story.pages} ${story.excerpt}`.toLowerCase();
+    return haystack.includes(state.query.toLowerCase());
   });
 }
 
@@ -113,17 +192,29 @@ function currentViewIcon() {
   return state.view === 'card' ? 'view_stream' : 'notes';
 }
 
+function currentViewModeClass() {
+  return state.view === 'card' ? 'is-card' : 'is-list';
+}
+
+function renderViewToggleIcon() {
+  return `
+    <span class="view-toggle-icon-stack" aria-hidden="true">
+      <span class="view-toggle-icon view-toggle-icon--card">
+        <span class="material-symbols-outlined">view_stream</span>
+      </span>
+      <span class="view-toggle-icon view-toggle-icon--list">
+        <span class="material-symbols-outlined">notes</span>
+      </span>
+    </span>
+  `;
+}
+
 function renderHomePage() {
   app.innerHTML = `
     <section class="page home-page">
-      <div class="hero">
-        <div class="hero-card">
-          <img class="hero-image" src="assets/hero-river.png" alt="River and forest landscape at dusk" />
-        </div>
-        <div class="hero-copy">
-          <h1 class="hero-title">Short Horror from Atlantic Canada</h1>
-          <a class="hero-readmore" id="exploreCollection" href="#stories">Explore the Collection</a>
-        </div>
+      <div class="home-intro">
+        <h1 class="intro-title">Short Horror Rooted in Atlantic Canada</h1>
+        <p class="intro-copy">Stories grounded in Atlantic weather, coastlines, memory, and the quieter kinds of dread.</p>
       </div>
 
       <div class="section-head" id="stories">
@@ -131,9 +222,12 @@ function renderHomePage() {
       </div>
 
       <div class="search-row">
-        <input id="storySearch" class="search-input" type="search" placeholder="Search stories" value="${escapeHtml(state.query)}" aria-label="Search stories" />
-        <button id="viewToggle" class="view-toggle" type="button" aria-label="Switch view" title="${state.view === 'card' ? 'Switch to list view' : 'Switch to card view'}">
-          <span class="material-symbols-outlined">${currentViewIcon()}</span>
+        <div class="input-shell">
+          <input id="storySearch" class="search-input" type="search" placeholder="Search stories" value="${escapeHtml(state.query)}" aria-label="Search stories" />
+          <button id="clearSearchInput" class="clear-input-btn" type="button" aria-label="Clear search">×</button>
+        </div>
+        <button id="viewToggle" class="view-toggle ${currentViewModeClass()}" type="button" aria-label="Switch view" title="${state.view === 'card' ? 'Switch to list view' : 'Switch to card view'}">
+          ${renderViewToggleIcon()}
         </button>
       </div>
 
@@ -146,30 +240,34 @@ function renderHomePage() {
   `;
 
   const searchInput = document.getElementById('storySearch');
+  const clearSearchButton = document.getElementById('clearSearchInput');
   const viewToggle = document.getElementById('viewToggle');
-  const exploreCollection = document.getElementById('exploreCollection');
 
   searchInput.addEventListener('input', (event) => {
     state.query = event.target.value;
+    syncSearchUI();
     updateStories();
+  });
+
+  clearSearchButton?.addEventListener('click', () => {
+    state.query = '';
+    syncSearchUI();
+    updateStories();
+    searchInput.focus();
   });
 
   viewToggle.addEventListener('click', () => {
     state.view = state.view === 'card' ? 'list' : 'card';
-    viewToggle.querySelector('.material-symbols-outlined').textContent = currentViewIcon();
-    viewToggle.title = state.view === 'card' ? 'Switch to list view' : 'Switch to card view';
     updateStories();
+    viewToggle.classList.toggle('is-card', state.view === 'card');
+    viewToggle.classList.toggle('is-list', state.view === 'list');
+    viewToggle.title = state.view === 'card' ? 'Switch to list view' : 'Switch to card view';
   });
 
-  exploreCollection.addEventListener('click', (event) => {
-    event.preventDefault();
-    const target = document.getElementById('stories');
-    if (!target) return;
-    const top = target.getBoundingClientRect().top + window.scrollY - 18;
-    window.scrollTo({ top, behavior: 'smooth' });
-  });
 
   wireNewsletter();
+  syncSearchUI();
+  syncNewsletterUI();
 }
 
 function updateStories() {
@@ -216,31 +314,39 @@ function renderStoryCard(story) {
   `;
 }
 
+function renderButtonContent() {
+  return `
+    <span class="button-content-stack" aria-hidden="true">
+      <span class="button-face button-face--subscribe">Subscribe</span>
+      <span class="button-face button-face--spinner"><span class="spinner" aria-hidden="true"></span></span>
+      <span class="button-face button-face--thanks">Thank you!</span>
+    </span>
+  `;
+}
+
 function renderNewsletterMarkup() {
-  const buttonContent = state.newsletterLoading
-    ? '<span class="spinner" aria-hidden="true"></span><span>Subscribing…</span>'
-    : state.newsletterSubmitted
-      ? 'Thank you!'
-      : 'Subscribe';
+  const buttonContent = renderButtonContent();
 
   return `
     <section class="newsletter-block" aria-labelledby="newsletterTitle">
       <h2 id="newsletterTitle" class="newsletter-title">Looking for more?</h2>
       <p class="newsletter-copy">Join the mailing list — get notified when new stories are posted!</p>
       <form id="newsletterForm" class="newsletter-form">
-        <input
-          id="newsletterEmail"
-          class="newsletter-input"
-          type="email"
-          placeholder="Email address"
-          value="${escapeHtml(state.newsletterEmail)}"
-          ${state.newsletterSubmitted ? 'disabled' : ''}
-          aria-label="Email address"
-          required
-        />
+        <div class="input-shell">
+          <input
+            id="newsletterEmail"
+            class="newsletter-input"
+            type="email"
+            placeholder="Email address"
+            value="${escapeHtml(state.newsletterEmail)}"
+            aria-label="Email address"
+            required
+          />
+          <button id="clearNewsletterInput" class="clear-input-btn" type="button" aria-label="Clear email">×</button>
+        </div>
         <button
           id="newsletterButton"
-          class="newsletter-button ${state.newsletterSubmitted ? 'is-success' : ''}"
+          class="newsletter-button ${state.newsletterLoading ? 'is-loading' : ''} ${state.newsletterSubmitted ? 'is-success' : ''}"
           type="submit"
           ${state.newsletterLoading || state.newsletterSubmitted ? 'disabled' : ''}
         >${buttonContent}</button>
@@ -253,36 +359,78 @@ function wireNewsletter() {
   const form = document.getElementById('newsletterForm');
   const emailInput = document.getElementById('newsletterEmail');
   const button = document.getElementById('newsletterButton');
+  const clearButton = document.getElementById('clearNewsletterInput');
   if (!form || !emailInput || !button) return;
 
   emailInput.addEventListener('input', (event) => {
+    if (state.newsletterSubmitted) return;
     state.newsletterEmail = event.target.value;
+    syncNewsletterUI();
+  });
+
+  clearButton?.addEventListener('click', () => {
+    if (state.newsletterSubmitted || emailInput.readOnly) return;
+    state.newsletterEmail = '';
+    syncNewsletterUI();
+    emailInput.focus();
   });
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    if (state.newsletterLoading || state.newsletterSubmitted) return;
-
-    const email = emailInput.value.trim();
-    if (!isValidEmail(email)) {
-      emailInput.reportValidity();
-      return;
-    }
-
-    state.newsletterEmail = email;
-    state.newsletterLoading = true;
-    button.disabled = true;
-    button.innerHTML = '<span class="spinner" aria-hidden="true"></span><span>Subscribing…</span>';
-
-    window.setTimeout(() => {
-      state.newsletterLoading = false;
-      state.newsletterSubmitted = true;
-      emailInput.disabled = true;
-      button.disabled = true;
-      button.classList.add('is-success');
-      button.textContent = 'Thank you!';
-    }, 800);
+    handleNewsletterSubmit(emailInput, button);
   });
+}
+
+function handleNewsletterSubmit(input, button) {
+  if (state.newsletterLoading || state.newsletterSubmitted) return;
+
+  const email = input.value.trim();
+  if (!isValidEmail(email)) {
+    input.reportValidity();
+    return;
+  }
+
+  state.newsletterEmail = email;
+  state.newsletterLoading = true;
+  syncNewsletterUI();
+
+  button.disabled = true;
+
+  window.setTimeout(() => {
+    state.newsletterLoading = false;
+    state.newsletterSubmitted = true;
+    syncNewsletterUI();
+  }, 800);
+}
+
+function syncNewsletterUI() {
+  const homeEmailInput = document.getElementById('newsletterEmail');
+  const homeClearButton = document.getElementById('clearNewsletterInput');
+  const allEmailInputs = [menuEmailInput, homeEmailInput].filter(Boolean);
+  const allButtons = [menuSubscribeButton, document.getElementById('newsletterButton')].filter(Boolean);
+
+  allEmailInputs.forEach((input) => {
+    input.value = state.newsletterEmail;
+    input.readOnly = state.newsletterSubmitted;
+    input.disabled = false;
+    input.setAttribute('aria-disabled', state.newsletterSubmitted ? 'true' : 'false');
+    input.classList.toggle('is-locked', state.newsletterSubmitted);
+  });
+
+  allButtons.forEach((button) => {
+    button.disabled = state.newsletterLoading || state.newsletterSubmitted;
+    button.classList.toggle('is-loading', state.newsletterLoading);
+    button.classList.toggle('is-success', state.newsletterSubmitted);
+    if (!button.querySelector('.button-content-stack')) {
+      button.innerHTML = renderButtonContent();
+    }
+  });
+
+  const showEmailClear = state.newsletterEmail.length > 0 && !state.newsletterSubmitted;
+  menuEmailInput.classList.toggle('has-clear', showEmailClear);
+  homeEmailInput?.classList.toggle('has-clear', showEmailClear);
+  clearEmailInputButton.classList.toggle('show', showEmailClear);
+  homeClearButton?.classList.toggle('show', showEmailClear);
 }
 
 function isValidEmail(value) {
@@ -300,6 +448,7 @@ function renderAboutPage() {
       </div>
     </section>
   `;
+  syncNewsletterUI();
 }
 
 function renderContactPage() {
@@ -326,6 +475,7 @@ function renderContactPage() {
       </div>
     </section>
   `;
+  syncNewsletterUI();
 }
 
 async function renderStoryPage(slug) {
